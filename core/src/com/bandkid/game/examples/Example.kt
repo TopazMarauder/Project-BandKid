@@ -1,4 +1,4 @@
-package com.bandkid.game
+package com.bandkid.game.examples
 
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
