@@ -6,7 +6,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PlayerManager @Inject constructor(private var playerData :PlayerData) {
+class PlayerManager @Inject constructor(private var playerData: PlayerData) {
 
     fun getPartySize() = playerData.party.let { Pair(it.currentSize, it.maxSize) }
 

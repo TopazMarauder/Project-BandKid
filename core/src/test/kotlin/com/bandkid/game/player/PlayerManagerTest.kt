@@ -6,9 +6,9 @@ import io.mockk.mockk
 import org.junit.Assert.*
 import org.junit.Test
 
-class PlayerManagerTest() {
+class PlayerManagerTest {
     private val subject = PlayerManager(
-        PlayerData(Party(emptyArray(),0,1), mockk()))
+        PlayerData(Party(emptyList(),0,1), mockk()))
 
     @Test
     fun getPartySize_returnsPairCurrentSizeMaxSize() {
