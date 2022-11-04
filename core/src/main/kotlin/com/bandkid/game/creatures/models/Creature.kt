@@ -8,4 +8,7 @@ interface Creature{
     val agility: Int
     var maxHealthPoints: Int
     var currentHealthPoints: Int
+    var shieldPoints: Int
+    var isRaged: Boolean
+    var isCrippled: Boolean
 }

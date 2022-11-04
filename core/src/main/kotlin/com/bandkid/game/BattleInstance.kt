@@ -1,5 +1,6 @@
 package com.bandkid.game
 
+import com.bandkid.game.activeabilities.AbilityEffectBundle
 import com.bandkid.game.activeabilities.ActiveAbilityManager
 import com.bandkid.game.activeabilities.AbilityName
 import com.bandkid.game.activeabilities.AbilityName.BASIC_PHYSICAL_ATTACK
@@ -9,33 +10,40 @@ import com.bandkid.game.models.Party
 import com.bandkid.game.models.Symphonist
 import javax.inject.Inject
 
-class BattleInstance @Inject constructor(val activeAbilityManager: ActiveAbilityManager){
+class BattleInstance @Inject constructor(private val activeAbilityManager: ActiveAbilityManager){
+
+    val instanceParty = Party(mutableListOf(), 1, 1)
+    val instanceEnemies: MutableList<Enemy> = mutableListOf()
 
 
-    private val exampleSymphonist  = Symphonist(1,1,1,1,1,1,1)
-    val exampleParty = Party(listOf(exampleSymphonist), 1, 1)
 
-    private val exampleEnemy1 = Enemy(100, 100)
-    private val exampleEnemy2 = Enemy(100, 100)
-    private val exampleEnemy3 = Enemy(100, 100)
-    private val enemies: MutableList<Creature> = mutableListOf(exampleEnemy1, exampleEnemy2, exampleEnemy3)
-
-
-    init {
-        val targetedEnemies = listOf<Int>(1,3)
-        initiateOffensiveActiveAbility(exampleParty.orchestra[0], targetedEnemies, enemies, BASIC_PHYSICAL_ATTACK)
+    fun initiateDefensiveActiveAbility(caster: Creature, targets: List<Int>){
 
     }
 
-    private fun initiateDefensiveActiveAbility(symphonist: Symphonist, targets: List<Int>, party: Party ){
-
-    }
-
-    private fun initiateOffensiveActiveAbility(symphonist: Symphonist, targets: List<Int>, enemies: List<Creature>, abilityName: AbilityName) {
-        targets.map {
-            activeAbilityManager.doActiveAbility(symphonist, enemies[it], abilityName)
+    fun initiateOffensiveActiveAbility(caster: Creature, targets: List<Int>, abilityName: AbilityName) {
+        targets.map { target ->
+            if (caster is Symphonist)
+                instanceEnemies[target].applyEffectBundle(
+                    activeAbilityManager.doActiveAbility(caster, instanceEnemies[target], abilityName),
+                    caster
+                )
+            else {
+                instanceParty.orchestra[target].applyEffectBundle(
+                    activeAbilityManager.doActiveAbility(caster, instanceParty.orchestra[target], abilityName),
+                    caster
+                )
+            }
         }
+    }
 
+    private fun Creature.applyEffectBundle(effectBundle: AbilityEffectBundle, caster: Creature){
+        currentHealthPoints -= effectBundle.damageDone
+        currentHealthPoints += effectBundle.healingDone
+        caster.currentHealthPoints += effectBundle.lifestealDone
+        shieldPoints += effectBundle.shieldingDone
+        effectBundle.crippleApplied?.let { isCrippled = it }
+        effectBundle.rageApplied?.let { isRaged = it }
     }
 
 }

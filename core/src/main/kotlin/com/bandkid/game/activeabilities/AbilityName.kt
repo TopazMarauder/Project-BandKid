@@ -6,7 +6,9 @@ import com.bandkid.game.activeabilities.AbilityName.AbilityType.DARK
 
 enum class AbilityName(val abilityType: AbilityType, val abilityTarget: AbilityTarget)  {
     BASIC_PHYSICAL_ATTACK(NONE, SINGLE),
-    BASIC_MAGICAL_ATTACK(DARK, ALL);
+    BASIC_MAGICAL_ATTACK(DARK, ALL),
+    PHYSICAL_LIFESTEAL_ATTACK(NONE, SINGLE);
+
 
     enum class AbilityType {
         NONE,

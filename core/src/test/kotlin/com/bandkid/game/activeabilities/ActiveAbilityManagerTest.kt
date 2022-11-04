@@ -1,7 +1,6 @@
 package com.bandkid.game.activeabilities
 
 import com.bandkid.game.activeabilities.AbilityName.*
-import com.bandkid.game.creatures.models.Creature
 import com.bandkid.game.models.Symphonist
 import io.mockk.mockk
 import io.mockk.verify
@@ -14,9 +13,9 @@ class ActiveAbilityManagerTest {
     @Test
     fun playCard_givenExampleAttack_callsApplyExampleAttack() {
         val symphonist = mockk<Symphonist>()
-        val target = mockk<Creature>()
+        val target = mockk<com.bandkid.game.creatures.models.Creature>()
 
-        subject.doActiveAbility(symphonist, target, BASIC_ATTACK)
+        subject.doActiveAbility(symphonist, target, BASIC_PHYSICAL_ATTACK)
 
         verify { activeAbilityEffects.applyBasicPhysicalAttack(symphonist, target) }
     }
@@ -24,7 +23,7 @@ class ActiveAbilityManagerTest {
     @Test
     fun playCard_givenExampleAttack2_callsApplyExampleAttack2() {
         val symphonist = mockk<Symphonist>()
-        val target = mockk<Creature>()
+        val target = mockk<com.bandkid.game.creatures.models.Creature>()
 
         subject.doActiveAbility(symphonist, target, BASIC_MAGICAL_ATTACK)
 

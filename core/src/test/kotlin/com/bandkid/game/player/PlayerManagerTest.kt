@@ -1,14 +1,13 @@
 package com.bandkid.game.player
 
-import com.bandkid.game.models.Coordinates
 import com.bandkid.game.models.Party
 import io.mockk.mockk
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class PlayerManagerTest {
     private val subject = PlayerManager(
-        PlayerData(Party(emptyList(),0,1), mockk()))
+        PlayerData(Party(mutableListOf(),0,1), mockk()))
 
     @Test
     fun getPartySize_returnsPairCurrentSizeMaxSize() {
