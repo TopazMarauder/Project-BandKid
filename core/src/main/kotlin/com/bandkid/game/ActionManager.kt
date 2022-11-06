@@ -3,19 +3,18 @@ package com.bandkid.game
 import com.bandkid.game.activeabilities.AbilityEffectBundle
 import com.bandkid.game.activeabilities.ActiveAbilityManager
 import com.bandkid.game.activeabilities.AbilityName
-import com.bandkid.game.activeabilities.AbilityName.BASIC_PHYSICAL_ATTACK
 import com.bandkid.game.creatures.models.Creature
 import com.bandkid.game.creatures.models.Enemy
 import com.bandkid.game.models.Party
 import com.bandkid.game.models.Symphonist
 import javax.inject.Inject
 
-class BattleInstance @Inject constructor(private val activeAbilityManager: ActiveAbilityManager){
+class ActionManager @Inject constructor(private val activeAbilityManager: ActiveAbilityManager){
 
-    val instanceParty = Party(mutableListOf(), 1, 1)
+    @Inject
+    lateinit var instanceParty: Party
+
     val instanceEnemies: MutableList<Enemy> = mutableListOf()
-
-
 
     fun initiateDefensiveActiveAbility(caster: Creature, targets: List<Int>){
 

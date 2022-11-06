@@ -1,8 +1,9 @@
 package com.bandkid.game.models
 
+import com.bandkid.game.activeabilities.AbilityName
 import com.bandkid.game.creatures.models.Creature
 
-data class Symphonist(
+class Symphonist(
     override val strength: Int,
     override val durability: Int,
     override val intellect: Int,
@@ -12,5 +13,11 @@ data class Symphonist(
     override var currentHealthPoints: Int,
     override var shieldPoints: Int = 0,
     override var isRaged: Boolean = false,
-    override var isCrippled: Boolean = false
-) : Creature
+    override var isCrippled: Boolean = false,
+    var moveSet: MutableList<AbilityName> = mutableListOf(),
+    var equippedItem: Item? = null
+) : Creature {
+    fun applyItem(){
+
+    }
+}

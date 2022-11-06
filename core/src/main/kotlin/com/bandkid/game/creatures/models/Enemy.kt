@@ -1,5 +1,7 @@
 package com.bandkid.game.creatures.models
 
+import com.bandkid.game.activeabilities.AbilityName
+
 data class Enemy(
     override val strength: Int,
     override val durability: Int,
@@ -10,5 +12,6 @@ data class Enemy(
     override var currentHealthPoints: Int,
     override var shieldPoints: Int = 0,
     override var isRaged: Boolean = false,
-    override var isCrippled: Boolean = false
+    override var isCrippled: Boolean = false,
+    var moveSet: MutableList<AbilityName> = mutableListOf()
 ) : Creature

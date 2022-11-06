@@ -1,6 +1,6 @@
 package com.bandkid.game.creatures.models
 
-interface Creature{
+interface Creature {
     val strength: Int
     val durability: Int
     val intellect: Int

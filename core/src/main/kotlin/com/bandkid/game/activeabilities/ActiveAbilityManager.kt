@@ -8,7 +8,6 @@ class ActiveAbilityManager @Inject constructor(
     private val activeAbilityEffects: ActiveAbilityEffects
 ) {
 
-
     fun doActiveAbility(caster: Creature, target: Creature, abilityName: AbilityName): AbilityEffectBundle {
         return when (abilityName) {
             BASIC_PHYSICAL_ATTACK -> activeAbilityEffects.applyBasicPhysicalAttack(caster, target)
@@ -17,6 +16,4 @@ class ActiveAbilityManager @Inject constructor(
         }
 
     }
-
-
 }

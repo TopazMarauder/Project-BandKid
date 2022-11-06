@@ -1,11 +1,10 @@
 package com.bandkid.game
 
 import com.bandkid.game.activeabilities.AbilityEffectBundle
-import com.bandkid.game.activeabilities.AbilityName
 import com.bandkid.game.activeabilities.AbilityName.BASIC_PHYSICAL_ATTACK
-import com.bandkid.game.activeabilities.ActiveAbilityEffects
 import com.bandkid.game.activeabilities.ActiveAbilityManager
 import com.bandkid.game.creatures.models.Enemy
+import com.bandkid.game.models.Party
 import com.bandkid.game.models.Symphonist
 import io.mockk.every
 import io.mockk.mockk
@@ -13,11 +12,15 @@ import io.mockk.verify
 import org.junit.Assert.*
 import org.junit.Test
 
-class BattleInstanceTest {
+class ActionManagerTest {
 
     private val activeAbilityManger = mockk<ActiveAbilityManager>()
-    private val subject = BattleInstance(activeAbilityManger)
+    private val subject = ActionManager(activeAbilityManger)
+    init {
+        subject.instanceParty = Party(mutableListOf(), 1, 1)
+    }
 
+    //region initiateOffensiveActiveAbility
     @Test
     fun initiateOffensiveActiveAbility_givenSingleEnemyTargetAsSymphonist_callsDoActiveAbilityOnTarget(){
         val testEnemy1 = mockk<Enemy>(relaxed = true)
@@ -133,5 +136,9 @@ class BattleInstanceTest {
         assertTrue(testEnemy1.isCrippled)
         assertFalse(testEnemy1.isRaged)
     }
+    //endregion initiateOffensiveAbility
+
+
+
 
 }
