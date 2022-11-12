@@ -1,8 +1,8 @@
-package com.bandkid.game.activeabilities
+package com.bandkid.game.battle.activeabilities
 
-import com.bandkid.game.activeabilities.AbilityName.AbilityTarget.*
-import com.bandkid.game.activeabilities.AbilityName.AbilityType.*
-import com.bandkid.game.activeabilities.AbilityName.AbilityType.DARK
+import com.bandkid.game.battle.activeabilities.AbilityName.AbilityTarget.*
+import com.bandkid.game.battle.activeabilities.AbilityName.AbilityType.*
+import com.bandkid.game.battle.activeabilities.AbilityName.AbilityType.DARK
 
 enum class AbilityName(val abilityType: AbilityType, val abilityTarget: AbilityTarget)  {
     BASIC_PHYSICAL_ATTACK(NONE, SINGLE),

@@ -1,6 +1,6 @@
 package com.bandkid.game.creatures.models
 
-import com.bandkid.game.activeabilities.AbilityName
+import com.bandkid.game.battle.activeabilities.AbilityName
 
 data class Enemy(
     override val strength: Int,

@@ -1,4 +1,4 @@
-package com.bandkid.game.activeabilities
+package com.bandkid.game.battle.activeabilities
 
 data class AbilityEffectBundle(
     val damageDone: Int = 0,

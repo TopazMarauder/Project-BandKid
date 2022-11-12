@@ -1,8 +1,8 @@
-package com.bandkid.game
+package com.bandkid.game.battle
 
-import com.bandkid.game.activeabilities.AbilityEffectBundle
-import com.bandkid.game.activeabilities.ActiveAbilityManager
-import com.bandkid.game.activeabilities.AbilityName
+import com.bandkid.game.battle.activeabilities.AbilityEffectBundle
+import com.bandkid.game.battle.activeabilities.ActiveAbilityManager
+import com.bandkid.game.battle.activeabilities.AbilityName
 import com.bandkid.game.creatures.models.Creature
 import com.bandkid.game.creatures.models.Enemy
 import com.bandkid.game.models.Party

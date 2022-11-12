@@ -1,6 +1,6 @@
 package com.bandkid.game.models
 
-import com.bandkid.game.activeabilities.AbilityName
+import com.bandkid.game.battle.activeabilities.AbilityName
 import com.bandkid.game.creatures.models.Creature
 
 class Symphonist(
