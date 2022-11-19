@@ -1,5 +1,7 @@
 package com.bandkid.game.creatures.models
 
+import com.bandkid.game.battle.activeabilities.AbilityName
+
 interface Creature {
     val strength: Int
     val durability: Int
@@ -11,4 +13,6 @@ interface Creature {
     var shieldPoints: Int
     var isRaged: Boolean
     var isCrippled: Boolean
+    var moveSet: MutableList<AbilityName>
+    var moveInQueue: Pair<Creature?, AbilityName>?
 }

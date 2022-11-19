@@ -1,8 +1,7 @@
 package com.bandkid.game.models
 
-import javax.inject.Singleton
+import com.bandkid.game.creatures.models.symphonists.Symphonist
 
-@Singleton
 data class Party(
     var orchestra: MutableList<Symphonist>,
     var currentSize: Int,

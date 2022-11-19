@@ -4,9 +4,9 @@ import com.bandkid.game.battle.activeabilities.AbilityEffectBundle
 import com.bandkid.game.battle.activeabilities.ActiveAbilityManager
 import com.bandkid.game.battle.activeabilities.AbilityName
 import com.bandkid.game.creatures.models.Creature
-import com.bandkid.game.creatures.models.Enemy
+import com.bandkid.game.creatures.models.enemies.Enemy
 import com.bandkid.game.models.Party
-import com.bandkid.game.models.Symphonist
+import com.bandkid.game.creatures.models.symphonists.Symphonist
 import javax.inject.Inject
 
 class ActionManager @Inject constructor(private val activeAbilityManager: ActiveAbilityManager){

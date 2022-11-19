@@ -3,9 +3,9 @@ package com.bandkid.game.battle
 import com.bandkid.game.battle.activeabilities.AbilityEffectBundle
 import com.bandkid.game.battle.activeabilities.AbilityName.BASIC_PHYSICAL_ATTACK
 import com.bandkid.game.battle.activeabilities.ActiveAbilityManager
-import com.bandkid.game.creatures.models.Enemy
+import com.bandkid.game.creatures.models.enemies.Enemy
 import com.bandkid.game.models.Party
-import com.bandkid.game.models.Symphonist
+import com.bandkid.game.creatures.models.symphonists.Symphonist
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -54,8 +54,8 @@ class ActionManagerTest {
 
     @Test
     fun initiateOffensiveActiveAbility_givenEnemyTargetAsSymphonist_changesTargetEnemyStats() {
-        val testEnemy1 = Enemy(1, 1, 1, 1, 1, 10, 10)
-        val testEnemy2 = Enemy(1, 1, 1, 1, 1, 10, 10, isCrippled = false, isRaged = false)
+        val testEnemy1 = object: Enemy(1, 1, 1, 1, 1, 10, 10) {}
+        val testEnemy2 = object: Enemy(1, 1, 1, 1, 1, 10, 10, isCrippled = false, isRaged = false) {}
         val symphonist = Symphonist(1, 1, 1, 1, 1, 10, 10)
         val testBundle = AbilityEffectBundle( damageDone = 5, healingDone = 10, shieldingDone = 10, crippleApplied = true, rageApplied = true)
         subject.instanceEnemies.add(testEnemy1)
@@ -75,8 +75,8 @@ class ActionManagerTest {
 
     @Test
     fun initiateOffensiveActiveAbility_givenSymphonistTargetAsEnemy_changesTargetSymphonistStats() {
-        val testEnemy1 = Enemy(1, 1, 1, 1, 1, 10, 10)
-        val testEnemy2 = Enemy(1, 1, 1, 1, 1, 10, 10)
+        val testEnemy1 = object: Enemy(1, 1, 1, 1, 1, 10, 10) {}
+        val testEnemy2 = object: Enemy(1, 1, 1, 1, 1, 10, 10) {}
         val symphonist1 = Symphonist(1, 1, 1, 1, 1, 10, 10)
         val symphonist2 = Symphonist(1, 1, 1, 1, 1, 10, 10, isCrippled = true, isRaged = true)
         val testBundle = AbilityEffectBundle( damageDone = 5, healingDone = 10, shieldingDone = 10, crippleApplied = false, rageApplied = false)
@@ -96,7 +96,7 @@ class ActionManagerTest {
 
     @Test
     fun initiateOffensiveActiveAbility_givenLifestealAbilityAsSymphonist_healsSymphonist() {
-        val testEnemy1 = Enemy(1, 1, 1, 1, 1, 10, 10)
+        val testEnemy1 = object: Enemy(1, 1, 1, 1, 1, 10, 10) {}
         val symphonist = Symphonist(1, 1, 1, 1, 1, 10, 10)
         val testBundle = AbilityEffectBundle( lifestealDone = 10)
         subject.instanceEnemies.add(testEnemy1)
@@ -110,7 +110,7 @@ class ActionManagerTest {
 
     @Test
     fun initiateOffensiveActiveAbility_givenLifestealAbilityAsEnemy_healsEnemy() {
-        val testEnemy1 = Enemy(1, 1, 1, 1, 1, 10, 10)
+        val testEnemy1 = object: Enemy(1, 1, 1, 1, 1, 10, 10) {}
         val symphonist1 = Symphonist(1, 1, 1, 1, 1, 10, 10)
         val testBundle = AbilityEffectBundle( lifestealDone = 10)
         subject.instanceEnemies.add(testEnemy1)
@@ -124,7 +124,7 @@ class ActionManagerTest {
 
     @Test
     fun initiateOffensiveActiveAbility_givenNonCripplingOrRagingAbilityAsSymphonist_doesNotChangeRagedOrCrippled() {
-        val testEnemy1 = Enemy(1, 1, 1, 1, 1, 10, 10, isCrippled = true, isRaged = false)
+        val testEnemy1 = object: Enemy(1, 1, 1, 1, 1, 10, 10, isCrippled = true, isRaged = false) {}
         val symphonist = Symphonist(1, 1, 1, 1, 1, 10, 10)
         val testBundle = AbilityEffectBundle()
         subject.instanceEnemies.add(testEnemy1)

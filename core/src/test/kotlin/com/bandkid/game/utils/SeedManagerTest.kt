@@ -1,6 +1,5 @@
 package com.bandkid.game.utils
 
-import io.mockk.verify
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -8,7 +7,7 @@ import kotlin.test.assertNotNull
 
 class SeedManagerTest() {
 
-    private val subject = SeedManager()
+    private val subject = SeedManager
 
     @Test
     fun getSeed_givenSetSeedUninitialized_returnsSetSeed() {

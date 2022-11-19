@@ -6,5 +6,4 @@ import com.bandkid.game.models.Party
 data class PlayerData(
     val party: Party,
     val location: Coordinates,
-
 )

@@ -2,7 +2,7 @@ package com.bandkid.game.utils
 
 import kotlin.random.Random
 
-class SeedManager  {
+object SeedManager  {
     private var gameSeed: Int? = null
 
     fun getSeed(setSeed: Int? = null): Int =
