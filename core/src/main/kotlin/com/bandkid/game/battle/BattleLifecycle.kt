@@ -1,6 +1,8 @@
 package com.bandkid.game.battle
 
 import com.badlogic.gdx.LifecycleListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
 
 interface BattleLifecycle {
 
@@ -9,6 +11,6 @@ interface BattleLifecycle {
      fun onChoicePhase() { onActionPhase() }
      fun onActionPhase() { onEndPhase() }
      fun onEndPhase() { onPassivePhase() }
-     fun onDestroy()
+     fun onDestroy() { }
 
 }
