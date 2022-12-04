@@ -16,20 +16,20 @@ class ActionManager @Inject constructor(private val activeAbilityManager: Active
 
     val instanceEnemies: MutableList<Enemy> = mutableListOf()
 
-    fun initiateDefensiveActiveAbility(caster: Creature, targets: List<Int>){
+    fun initiateDefensiveActiveAbility(caster: Creature, vararg targets: Creature){
 
     }
 
-    fun initiateOffensiveActiveAbility(caster: Creature, targets: List<Int>, abilityName: AbilityName) {
+    fun initiateOffensiveActiveAbility(caster: Creature,  abilityName: AbilityName,  vararg targets: Creature,) {
         targets.map { target ->
             if (caster is Symphonist)
-                instanceEnemies[target].applyEffectBundle(
-                    activeAbilityManager.doActiveAbility(caster, instanceEnemies[target], abilityName),
+                target.applyEffectBundle(
+                    activeAbilityManager.doActiveAbility(caster, target, abilityName),
                     caster
                 )
             else {
-                instanceParty.orchestra[target].applyEffectBundle(
-                    activeAbilityManager.doActiveAbility(caster, instanceParty.orchestra[target], abilityName),
+                target.applyEffectBundle(
+                    activeAbilityManager.doActiveAbility(caster, target, abilityName),
                     caster
                 )
             }

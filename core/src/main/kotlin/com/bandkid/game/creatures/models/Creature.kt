@@ -14,5 +14,5 @@ interface Creature {
     var isRaged: Boolean
     var isCrippled: Boolean
     var moveSet: MutableList<AbilityName>
-    var moveInQueue: Pair<Creature?, AbilityName>?
+    var moveInQueue: Pair<List<Creature>?, AbilityName>?
 }

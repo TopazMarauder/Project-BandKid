@@ -3,6 +3,7 @@ package com.bandkid.game.battle
 import com.bandkid.game.creatures.models.enemies.Enemy
 import com.bandkid.game.creatures.models.symphonists.Symphonist
 import com.bandkid.game.player.PlayerProvider
+import com.bandkid.game.utils.SeedManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -10,6 +11,7 @@ import ktx.async.KTX
 import ktx.async.KtxAsync
 import ktx.async.newSingleThreadAsyncContext
 import javax.inject.Inject
+import javax.swing.Action
 
 class BattleInstance: BattleLifecycle {
 
@@ -18,6 +20,9 @@ class BattleInstance: BattleLifecycle {
 
     @Inject
     lateinit var enemyProvider: EnemyProvider
+
+    @Inject
+    lateinit var actionManager: ActionManager
 
     private val orchestra: MutableList<Symphonist> by lazy { playerProvider.getOrchestra()}
     private val enemies: MutableList<Enemy> by lazy {enemyProvider.getEnemies() }
@@ -44,9 +49,13 @@ class BattleInstance: BattleLifecycle {
 
     override fun onActionPhase() {
         super.onActionPhase()
+        (orchestra + enemies).sortedBy { SeedManager.getDouble() }.forEach{
+
+        }
     }
 
     override fun onEndPhase() {
+
     }
 
     override fun onDestroy() {
@@ -59,6 +68,10 @@ class BattleInstance: BattleLifecycle {
                 enemy.queueMove(orchestra, enemies)
             }
         }
+    }
+
+    private suspend fun performActions() {
+
     }
 
 
