@@ -1,74 +1,152 @@
 package com.bandkid.game.battle
 
 import com.bandkid.game.AsyncTest
-import com.bandkid.game.battle.activeabilities.AbilityName
 import com.bandkid.game.battle.activeabilities.AbilityName.BASIC_PHYSICAL_ATTACK
 import com.bandkid.game.creatures.models.enemies.Enemy
 import com.bandkid.game.creatures.models.symphonists.Symphonist
 import com.bandkid.game.player.PlayerProvider
+import com.bandkid.game.utils.SeedManager
 import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
+import ktx.async.onRenderingThread
+import org.junit.After
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class BattleInstanceTest: AsyncTest() {
+class BattleInstanceTest : AsyncTest() {
+
     private val playerProvider = mockk<PlayerProvider>()
     private val enemyProvider = mockk<EnemyProvider>()
     private val actionManager = mockk<ActionManager>(relaxed = true)
 
+    private lateinit var subject: BattleInstance
+
+
+    @Before
+    fun setup() {
+        SeedManager.getSeed()
+
+        subject = BattleInstance()
+        subject.playerProvider = playerProvider
+        subject.enemyProvider = enemyProvider
+        subject.actionManager = actionManager
+    }
 
     //region onChoicePhase
     @Test
     fun onChoicePhase_getsEnemyMoves() {
-            val orchestra = mockk<MutableList<Symphonist>>(relaxed = true)
-            val enemy1 = mockk<Enemy>(relaxed = true)
-            val enemy2 = mockk<Enemy>(relaxed = true)
-            val enemies = mutableListOf<Enemy>(enemy1, enemy2)
-            every { playerProvider.getOrchestra() } returns orchestra
-            every { enemyProvider.getEnemies() } returns enemies
+        val orchestra = mockk<MutableList<Symphonist>>(relaxed = true)
+        val enemy1 = mockk<Enemy>(relaxed = true)
+        val enemy2 = mockk<Enemy>(relaxed = true)
+        val enemies = mutableListOf<Enemy>(enemy1, enemy2)
+        every { playerProvider.getOrchestra() } returns orchestra
+        every { enemyProvider.getEnemies() } returns enemies
 
-            val subject = BattleInstance()
-            subject.playerProvider = playerProvider
-            subject.enemyProvider = enemyProvider
+        runTest { onRenderingThread { subject.onChoicePhase() } }
 
-            subject.onCreate()
-
-            verify { enemy1.queueMove(orchestra, enemies) }
-            verify { enemy2.queueMove(orchestra, enemies) }
+        verify { enemy1.queueMove(orchestra, enemies) }
+        verify { enemy2.queueMove(orchestra, enemies) }
     }
     //endregion onChoicePhase
 
     //region onActionPhase
     @Test
-    fun onActionPhase_givenOffensiveActions_callsInitiateOffensiveActiveAbilityOrderedByAgility() {
-        val symphonist1 = mockk<Symphonist>{ every { agility } returns 1 }
-        val symphonist2 = mockk<Symphonist>{ every { agility } returns 3 }
-        val enemy1 = mockk<Enemy>{ every { agility } returns 2 }
-        val enemy2 = mockk<Enemy>{ every { agility } returns 4 }
+    fun onActionPhase_givenActions_callsInitiateActiveAbilityOrderedByAgility() {
+        val symphonist1 = mockk<Symphonist> { }
+        val symphonist2 = mockk<Symphonist> { }
+        val enemy1 = mockk<Enemy> { }
+        val enemy2 = mockk<Enemy> { }
         val orchestra = mutableListOf(symphonist1, symphonist2)
         val enemies = mutableListOf(enemy1, enemy2)
         every { playerProvider.getOrchestra() } returns orchestra
         every { enemyProvider.getEnemies() } returns enemies
-        every { enemy2.moveInQueue } returns Pair(listOf(symphonist2), BASIC_PHYSICAL_ATTACK)
-        every { symphonist2.moveInQueue } returns Pair(listOf(enemy2), BASIC_PHYSICAL_ATTACK)
-        every { enemy1.moveInQueue } returns Pair(listOf(symphonist1), BASIC_PHYSICAL_ATTACK)
-        every { symphonist1.moveInQueue } returns Pair(listOf(enemy1, enemy2), BASIC_PHYSICAL_ATTACK)
+        enemy2.apply {
+            every { agility } returns 4
+            every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
+            every { getQueuedTargets() } returns arrayOf(symphonist2)
+        }
+        symphonist2.apply {
+            every { agility } returns 3
+            every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
+            every { getQueuedTargets() } returns arrayOf(enemy2)
+        }
+        enemy1.apply {
+            every { agility } returns 2
+            every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
+            every { getQueuedTargets() } returns arrayOf(symphonist1)
+        }
+        symphonist1.apply {
+            every { agility } returns 1
+            every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
+            every { getQueuedTargets() } returns arrayOf(enemy1, enemy2)
+        }
+        mockkObject(SeedManager)
+        every { SeedManager.getDouble(0.0, 0.9) } returnsMany listOf(.1, .2, .3, .4, .5, .6, .7, .8)
 
-
-        val subject = BattleInstance()
-        subject.playerProvider = playerProvider
-        subject.enemyProvider = enemyProvider
-        subject.actionManager = actionManager
-
+        runTest { onRenderingThread { subject.onActionPhase() } }
 
         verifyOrder {
-            subject.actionManager.initiateOffensiveActiveAbility(enemy2, BASIC_PHYSICAL_ATTACK, symphonist2)
-            subject.actionManager.initiateOffensiveActiveAbility(symphonist2, BASIC_PHYSICAL_ATTACK,  enemy2)
-            subject.actionManager.initiateOffensiveActiveAbility(enemy1, BASIC_PHYSICAL_ATTACK, symphonist1)
-            subject.actionManager.initiateOffensiveActiveAbility(symphonist1, BASIC_PHYSICAL_ATTACK, enemy1, enemy2)
+            actionManager.initiateActiveAbility(enemy2, BASIC_PHYSICAL_ATTACK, symphonist2)
+            actionManager.initiateActiveAbility(symphonist2, BASIC_PHYSICAL_ATTACK, enemy2)
+            actionManager.initiateActiveAbility(enemy1, BASIC_PHYSICAL_ATTACK, symphonist1)
+            actionManager.initiateActiveAbility(symphonist1, BASIC_PHYSICAL_ATTACK, enemy1, enemy2)
+        }
+    }
+
+    @Test
+    fun onActionPhase_givenActionsWithEqualAgility_callsInitiateActiveAbilityOrderedByAgility() {
+        val symphonist1 = mockk<Symphonist> { }
+        val symphonist2 = mockk<Symphonist> { }
+        val enemy1 = mockk<Enemy> { }
+        val enemy2 = mockk<Enemy> { }
+        val orchestra = mutableListOf(symphonist1, symphonist2)
+        val enemies = mutableListOf(enemy1, enemy2)
+        every { playerProvider.getOrchestra() } returns orchestra
+        every { enemyProvider.getEnemies() } returns enemies
+        enemy2.apply {
+            every { agility } returns 3
+            every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
+            every { getQueuedTargets() } returns arrayOf(symphonist2)
+        }
+        symphonist2.apply {
+            every { agility } returns 3
+            every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
+            every { getQueuedTargets() } returns arrayOf(enemy2)
+        }
+        enemy1.apply {
+            every { agility } returns 3
+            every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
+            every { getQueuedTargets() } returns arrayOf(symphonist1)
+        }
+        symphonist1.apply {
+            every { agility } returns 3
+            every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
+            every { getQueuedTargets() } returns arrayOf(enemy1, enemy2)
+        }
+        mockkObject(SeedManager)
+
+
+        every { SeedManager.getDouble(0.0, 0.9) } returnsMany listOf(.1, .2, .3, .4, .5, .6, .7, .8)
+
+        runTest { onRenderingThread { subject.onActionPhase() } }
+
+        verifyOrder {
+            actionManager.initiateActiveAbility(symphonist1, BASIC_PHYSICAL_ATTACK, enemy1, enemy2)
+            actionManager.initiateActiveAbility(symphonist2, BASIC_PHYSICAL_ATTACK, enemy2)
+            actionManager.initiateActiveAbility(enemy1, BASIC_PHYSICAL_ATTACK, symphonist1)
+            actionManager.initiateActiveAbility(enemy2, BASIC_PHYSICAL_ATTACK, symphonist2)
         }
     }
 
     //endregion onActionPhase
 
+    @After
+    fun cleanup() {
+        unmockkAll()
+    }
 }

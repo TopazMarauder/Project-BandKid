@@ -18,17 +18,21 @@ abstract class Enemy(
     override var isRaged: Boolean = false,
     override var isCrippled: Boolean = false,
     override var moveSet: MutableList<AbilityName> = mutableListOf(),
-    override var moveInQueue: Pair<List<Creature>?, AbilityName>? = null
+    override var moveInQueue: Pair<Array<Creature>?, AbilityName>? = null
 ) : Creature {
 
-    fun queueMove(symphonists: MutableList<Symphonist>, enemies: MutableList<Enemy>) {
+    override fun queueMove(symphonists: MutableList<Symphonist>, enemies: MutableList<Enemy>) {
         moveInQueue = Pair(selectTarget(symphonists), selectAbility())
     }
+
+    override fun getQueuedMove(): AbilityName = moveInQueue?.second ?: AbilityName.NO_ACTION
+
+    override fun getQueuedTargets(): Array<Creature> = moveInQueue?.first ?: arrayOf()
 
     private fun selectAbility() = Random(SeedManager.getSeed()).nextInt(0, moveSet.size).let { moveSet[it] }
 
     //Assumes most enemies will usually target symphonists, randomly
-    private fun selectTarget(symphonists: MutableList<Symphonist>) = listOf(Random(SeedManager.getSeed()).nextInt(0, symphonists.size).let { symphonists[it] })
+    private fun selectTarget(symphonists: MutableList<Symphonist>): Array<Creature> = arrayOf(Random(SeedManager.getSeed()).nextInt(0, symphonists.size).let { symphonists[it] })
 
 
 }

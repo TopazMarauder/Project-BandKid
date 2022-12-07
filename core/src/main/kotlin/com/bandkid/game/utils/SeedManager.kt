@@ -9,6 +9,7 @@ object SeedManager  {
     fun getSeed(setSeed: Int? = null): Int =
         (setSeed ?: gameSeed ?: Random.nextInt()).also {gameSeed = it}
 
+    //region getInt
     fun getInt(min: Int, max: Int): Int =
         gameSeed?.let { Random(it).nextInt(min, max) }
             ?: gdxError("Uninitialized Seed getInt", UninitializedValueException("Uninitialized Seed getInt"))
@@ -20,7 +21,9 @@ object SeedManager  {
     fun getInt(): Int =
         gameSeed?.let { Random(it).nextInt() }
             ?: gdxError("Uninitialized Seed getInt", UninitializedValueException("Uninitialized Seed getInt"))
+    //endregion getInt
 
+    //region getDouble
     fun getDouble(min: Double, max: Double): Double =
         gameSeed?.let { Random(it).nextDouble(min, max) }
             ?: gdxError("Uninitialized Seed getDouble", UninitializedValueException("Uninitialized Seed getDouble"))
@@ -32,4 +35,6 @@ object SeedManager  {
     fun getDouble(): Double =
         gameSeed?.let { Random(it).nextDouble() }
             ?: gdxError("Uninitialized Seed getDouble", UninitializedValueException("Uninitialized Seed getDouble"))
+    //endregion getDouble
+
 }
