@@ -25,12 +25,15 @@ class ActionManager @Inject constructor(private val activeAbilityManager: Active
     }
 
     private fun Creature.applyEffectBundle(effectBundle: AbilityEffectBundle, caster: Creature){
+        if (effectBundle.resurrectTrigger) isDead = false
         currentHealthPoints -= effectBundle.damageDone
         currentHealthPoints += effectBundle.healingDone
         caster.currentHealthPoints += effectBundle.lifestealDone
         shieldPoints += effectBundle.shieldingDone
         effectBundle.crippleApplied?.let { isCrippled = it }
         effectBundle.rageApplied?.let { isRaged = it }
+        if (currentHealthPoints == 0) isDead = true
+        if (isDead) currentHealthPoints = 0
     }
 
 }

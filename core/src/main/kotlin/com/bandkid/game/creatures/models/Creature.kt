@@ -15,6 +15,7 @@ interface Creature {
     var shieldPoints: Int
     var isRaged: Boolean
     var isCrippled: Boolean
+    var isDead: Boolean
     var moveSet: MutableList<AbilityName>
     var moveInQueue: Pair<Array<Creature>?, AbilityName>?
 

@@ -17,6 +17,7 @@ abstract class Enemy(
     override var shieldPoints: Int = 0,
     override var isRaged: Boolean = false,
     override var isCrippled: Boolean = false,
+    override var isDead: Boolean = false,
     override var moveSet: MutableList<AbilityName> = mutableListOf(),
     override var moveInQueue: Pair<Array<Creature>?, AbilityName>? = null
 ) : Creature {

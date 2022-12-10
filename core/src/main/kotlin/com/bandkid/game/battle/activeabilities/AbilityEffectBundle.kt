@@ -6,6 +6,7 @@ data class AbilityEffectBundle(
     val lifestealDone: Int = 0,
     val shieldingDone: Int = 0,
     val crippleApplied: Boolean? = null,
-    val rageApplied: Boolean? = null
+    val rageApplied: Boolean? = null,
+    val resurrectTrigger: Boolean = false
 )
 

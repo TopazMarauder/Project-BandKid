@@ -1,5 +1,6 @@
 package com.bandkid.game.battle
 
+import com.bandkid.game.creatures.models.Creature
 import com.bandkid.game.creatures.models.enemies.Enemy
 import com.bandkid.game.creatures.models.symphonists.Symphonist
 import com.bandkid.game.player.PlayerProvider
@@ -73,18 +74,18 @@ class BattleInstance: BattleLifecycle {
     private suspend fun performActions() {
         withContext(defaultExecutor) {
             (orchestra + enemies)
-                .sortedBy { -1 * (it.agility.toDouble() + SeedManager.getDouble(0.0, 0.9))
-            }.forEach { caster ->
-                actionManager.initiateActiveAbility(
-                    caster,
-                    caster.getQueuedMove(),
-                    *caster.getQueuedTargets()
-                )
-            }
+                .sortedBy { -1 * (it.agility.toDouble() + SeedManager.getDouble(0.0, 0.9)) }
+                .forEach { caster ->
+                    validateAction(caster)
+
+
+                }
         }
     }
 
-
+    private fun validateAction(caster: Creature) {
+        if (!caster.isDead) actionManager.initiateActiveAbility(caster, caster.getQueuedMove(), *caster.getQueuedTargets())
+    }
 
 
 }

@@ -55,6 +55,7 @@ class BattleInstanceTest : AsyncTest() {
     //endregion onChoicePhase
 
     //region onActionPhase
+    //region callsInitiateActiveAbility
     @Test
     fun onActionPhase_givenActions_callsInitiateActiveAbilityOrderedByAgility() {
         val symphonist1 = mockk<Symphonist> { }
@@ -66,21 +67,25 @@ class BattleInstanceTest : AsyncTest() {
         every { playerProvider.getOrchestra() } returns orchestra
         every { enemyProvider.getEnemies() } returns enemies
         enemy2.apply {
+            every { isDead } returns false
             every { agility } returns 4
             every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
             every { getQueuedTargets() } returns arrayOf(symphonist2)
         }
         symphonist2.apply {
+            every { isDead } returns false
             every { agility } returns 3
             every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
             every { getQueuedTargets() } returns arrayOf(enemy2)
         }
         enemy1.apply {
+            every { isDead } returns false
             every { agility } returns 2
             every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
             every { getQueuedTargets() } returns arrayOf(symphonist1)
         }
         symphonist1.apply {
+            every { isDead } returns false
             every { agility } returns 1
             every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
             every { getQueuedTargets() } returns arrayOf(enemy1, enemy2)
@@ -109,21 +114,25 @@ class BattleInstanceTest : AsyncTest() {
         every { playerProvider.getOrchestra() } returns orchestra
         every { enemyProvider.getEnemies() } returns enemies
         enemy2.apply {
+            every { isDead } returns false
             every { agility } returns 3
             every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
             every { getQueuedTargets() } returns arrayOf(symphonist2)
         }
         symphonist2.apply {
+            every { isDead } returns false
             every { agility } returns 3
             every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
             every { getQueuedTargets() } returns arrayOf(enemy2)
         }
         enemy1.apply {
+            every { isDead } returns false
             every { agility } returns 3
             every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
             every { getQueuedTargets() } returns arrayOf(symphonist1)
         }
         symphonist1.apply {
+            every { isDead } returns false
             every { agility } returns 3
             every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
             every { getQueuedTargets() } returns arrayOf(enemy1, enemy2)
@@ -141,6 +150,42 @@ class BattleInstanceTest : AsyncTest() {
             actionManager.initiateActiveAbility(enemy1, BASIC_PHYSICAL_ATTACK, symphonist1)
             actionManager.initiateActiveAbility(enemy2, BASIC_PHYSICAL_ATTACK, symphonist2)
         }
+    }
+
+    @Test
+    fun onActionPhase_givenCreaturesWithIsDeadTrue__doesNotInitiateActiveAbilityForDead() {
+        val symphonist1 = mockk<Symphonist> {
+            every { isDead } returns true
+            every { agility } returns 3
+            every { getQueuedMove() } returns mockk()
+            every { getQueuedTargets() } returns arrayOf(mockk())
+        }
+        val enemy1 = mockk<Enemy> {
+            every { isDead } returns true
+            every { agility } returns 3
+            every { getQueuedMove() } returns mockk()
+            every { getQueuedTargets() } returns arrayOf(mockk())
+        }
+        val orchestra = mutableListOf(symphonist1)
+        val enemies = mutableListOf(enemy1)
+        every { playerProvider.getOrchestra() } returns orchestra
+        every { enemyProvider.getEnemies() } returns enemies
+        mockkObject(SeedManager)
+
+        every { SeedManager.getDouble(0.0, 0.9) } returnsMany listOf(.1, .2, .3, .4, .5, .6, .7, .8)
+
+        runTest { onRenderingThread { subject.onActionPhase() } }
+
+        verify(exactly = 0) { actionManager.initiateActiveAbility(any(), any(), any()) }
+        verify(exactly = 0) { actionManager.initiateActiveAbility(any(), any(), any()) }
+    }
+
+    //endregion callsInitiateActiveAbility
+
+    //region determineDeaths
+    @Test
+    fun onActionPhase_givenDeadCreature_callsCreatureOnDeathEffects(){
+
     }
 
     //endregion onActionPhase

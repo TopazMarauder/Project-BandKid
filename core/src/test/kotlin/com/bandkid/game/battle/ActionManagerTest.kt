@@ -216,6 +216,63 @@ class ActionManagerTest {
         assertTrue(testEnemy1.isCrippled)
         assertFalse(testEnemy1.isRaged)
     }
+
+    @Test
+    fun initiateActiveAbility_givenLethalDamage_setsIsDeadToTrue() {
+        val testEnemy1 = object: Enemy(1, 1, 1, 1, 1, 10, 10) {}
+        val symphonist1 = Symphonist(1, 1, 1, 1, 1, 10, 10)
+        val testBundle = AbilityEffectBundle(damageDone = 10)
+        subject.instanceEnemies.add(testEnemy1)
+        subject.instanceParty.orchestra.add(symphonist1)
+        every { activeAbilityManger.doActiveAbility(any(),any(), any()) } returns testBundle
+
+        subject.initiateActiveAbility(testEnemy1,  BASIC_PHYSICAL_ATTACK, symphonist1)
+        subject.initiateActiveAbility(symphonist1,  BASIC_PHYSICAL_ATTACK, testEnemy1)
+
+
+        assertEquals(0, testEnemy1.currentHealthPoints)
+        assertEquals(0, symphonist1.currentHealthPoints)
+        assertTrue(testEnemy1.isDead)
+        assertTrue(symphonist1.isDead)
+    }
+
+    @Test
+    fun initiateActiveAbility_givenDeadCreaturesHealedWithoutResurrect_isDeadRemainsTrueAndHealthZeroed() {
+        val testEnemy1 = object: Enemy(1, 1, 1, 1, 1, 10, 0, isDead = true) {}
+        val symphonist1 = Symphonist(1, 1, 1, 1, 1, 10, 0, isDead = true)
+        val testBundle = AbilityEffectBundle( healingDone = 1)
+        subject.instanceEnemies.add(testEnemy1)
+        subject.instanceParty.orchestra.add(symphonist1)
+        every { activeAbilityManger.doActiveAbility(any(),any(), any()) } returns testBundle
+
+        subject.initiateActiveAbility(testEnemy1,  BASIC_PHYSICAL_ATTACK, symphonist1)
+        subject.initiateActiveAbility(symphonist1,  BASIC_PHYSICAL_ATTACK, testEnemy1)
+
+
+        assertEquals(0, testEnemy1.currentHealthPoints)
+        assertEquals(0, symphonist1.currentHealthPoints)
+        assertTrue(testEnemy1.isDead)
+        assertTrue(symphonist1.isDead)
+    }
+
+    @Test
+    fun initiateActiveAbility_givenDeadCreaturesHealedWithResurrect_isDeadFalseAndHealthIncreased() {
+        val testEnemy1 = object: Enemy(1, 1, 1, 1, 1, 10, 0, isDead = true) {}
+        val symphonist1 = Symphonist(1, 1, 1, 1, 1, 10, 0, isDead = true)
+        val testBundle = AbilityEffectBundle( healingDone = 1, resurrectTrigger = true)
+        subject.instanceEnemies.add(testEnemy1)
+        subject.instanceParty.orchestra.add(symphonist1)
+        every { activeAbilityManger.doActiveAbility(any(),any(), any()) } returns testBundle
+
+        subject.initiateActiveAbility(testEnemy1,  BASIC_PHYSICAL_ATTACK, symphonist1)
+        subject.initiateActiveAbility(symphonist1,  BASIC_PHYSICAL_ATTACK, testEnemy1)
+
+
+        assertEquals(1, testEnemy1.currentHealthPoints)
+        assertEquals(1, symphonist1.currentHealthPoints)
+        assertFalse(testEnemy1.isDead)
+        assertFalse(symphonist1.isDead)
+    }
     //endregion initiateAbility
 
 
