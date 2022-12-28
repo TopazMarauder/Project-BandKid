@@ -20,9 +20,9 @@ class PlayerProviderTest {
 
     @Test
     fun getOrchestra_returnsCorrectOrchestra() {
-        val symphonist1 = Symphonist(1, 1,1,1,1,1,1)
-        val symphonist2 = Symphonist(2, 1,1,1,1,1,1)
-        val symphonist3 = Symphonist(3, 1,1,1,1,1,1)
+        val symphonist1 =  object: Symphonist(1, 1,1,1,1,1,1) {}
+        val symphonist2 =  object: Symphonist(2, 1,1,1,1,1,1) {}
+        val symphonist3 =  object: Symphonist(3, 1,1,1,1,1,1) {}
         val orchestra1 = mutableListOf(symphonist1, symphonist2, symphonist3)
         val subject1 = PlayerProvider(PlayerData(Party(orchestra1,0,1), mockk()))
 
@@ -32,9 +32,9 @@ class PlayerProviderTest {
     @Test
     fun setOrchestra_returnsCorrectOrchestraWhenGetOrchestra() {
         val subject1 = PlayerProvider(PlayerData(Party(mutableListOf(),0,1), mockk()))
-        val symphonist1 = Symphonist(1, 1,1,1,1,1,1)
-        val symphonist2 = Symphonist(2, 1,1,1,1,1,1)
-        val symphonist3 = Symphonist(3, 1,1,1,1,1,1)
+        val symphonist1 =  object: Symphonist(1, 1,1,1,1,1,1) {}
+        val symphonist2 =  object: Symphonist(2, 1,1,1,1,1,1) {}
+        val symphonist3 =  object: Symphonist(3, 1,1,1,1,1,1) {}
         val orchestra1 = mutableListOf(symphonist1, symphonist2, symphonist3)
 
         subject1.setOrchestra(orchestra1)

@@ -16,10 +16,14 @@ interface Creature {
     var isRaged: Boolean
     var isCrippled: Boolean
     var isDead: Boolean
+    var shouldActivateDeathAbility: Boolean?
+    val deathAbility: AbilityName?
     var moveSet: MutableList<AbilityName>
     var moveInQueue: Pair<Array<Creature>?, AbilityName>?
 
     fun queueMove(symphonists: MutableList<Symphonist>, enemies: MutableList<Enemy>)
     fun getQueuedMove(): AbilityName
     fun getQueuedTargets(): Array<Creature>
+    fun getDeathMove(): AbilityName
+    fun getDeathTargets(): Array<Creature>
 }

@@ -7,39 +7,37 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
-import kotlin.math.exp
 import kotlin.test.assertEquals
 
-class ActiveAbilityManagerTest {
+class AbilityManagerTest {
     private val activeAbilityEffects = mockk<ActiveAbilityEffects>()
-    private lateinit var subject : ActiveAbilityManager
-
+    private lateinit var subject : AbilityManager
 
     @Before
     fun setup() {
-        subject = ActiveAbilityManager(activeAbilityEffects)
+        subject = AbilityManager(activeAbilityEffects)
     }
 
     @Test
-    fun doActiveAbility_givenAttack_callsApplyAttack() {
+    fun doAbility_givenAttack_callsApplyAttack() {
         val symphonist = mockk<Symphonist>()
         val target = mockk<com.bandkid.game.creatures.models.Creature>()
         val expected = mockk<AbilityEffectBundle>()
         every { activeAbilityEffects.applyBasicPhysicalAttack(symphonist, target) } returns expected
 
-        val result = subject.doActiveAbility(symphonist, target, BASIC_PHYSICAL_ATTACK)
+        val result = subject.doAbility(symphonist, target, BASIC_PHYSICAL_ATTACK)
 
         verify { activeAbilityEffects.applyBasicPhysicalAttack(symphonist, target) }
         assertEquals(expected, result)
     }
 
     @Test
-    fun doActiveAbility_givenNoAction_returnsEmptyBundle() {
+    fun doAbility_givenNoAction_returnsEmptyBundle() {
         val symphonist = mockk<Symphonist>()
         val target = mockk<com.bandkid.game.creatures.models.Creature>()
         val expected = AbilityEffectBundle()
 
-        val result = subject.doActiveAbility(symphonist, target, NO_ACTION)
+        val result = subject.doAbility(symphonist, target, NO_ACTION)
 
         assertEquals(expected, result)
     }

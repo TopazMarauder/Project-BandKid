@@ -7,7 +7,7 @@ import com.bandkid.game.models.Item
 import com.bandkid.game.utils.SeedManager
 import kotlin.random.Random
 
-class Symphonist(
+abstract class Symphonist(
     override val strength: Int,
     override val durability: Int,
     override val intellect: Int,
@@ -19,13 +19,13 @@ class Symphonist(
     override var isRaged: Boolean = false,
     override var isCrippled: Boolean = false,
     override var isDead: Boolean = false,
+    override var shouldActivateDeathAbility: Boolean? = null,
+    override val deathAbility: AbilityName? = null,
     override var moveSet: MutableList<AbilityName> = mutableListOf(),
     override var moveInQueue: Pair<Array<Creature>?, AbilityName>? = null,
     var equippedItem: Item? = null
 ) : Creature {
-    fun applyItem(){
-
-    }
+    fun applyItem(){}
 
     override fun queueMove(symphonists: MutableList<Symphonist>, enemies: MutableList<Enemy>) {
         moveInQueue = Pair(selectTarget(enemies), selectAbility())
@@ -35,11 +35,14 @@ class Symphonist(
 
     override fun getQueuedTargets(): Array<Creature> = moveInQueue?.first ?: arrayOf()
 
+    override fun getDeathMove(): AbilityName = deathAbility ?: AbilityName.NO_ACTION
 
-    private fun selectAbility() = Random(SeedManager.getSeed()).nextInt(0, moveSet.size).let { moveSet[it] }
+    override fun getDeathTargets(): Array<Creature> = arrayOf()
+
+    private fun selectAbility() = SeedManager.getInt(0, moveSet.size).let { moveSet[it] }
 
     //Assumes most enemies will usually target symphonists, randomly
-    private fun selectTarget(symphonists: MutableList<Enemy>): Array<Creature> = arrayOf(Random(SeedManager.getSeed()).nextInt(0, symphonists.size).let { symphonists[it] })
+    private fun selectTarget(symphonists: MutableList<Enemy>): Array<Creature> = arrayOf(SeedManager.getInt(0, symphonists.size).let { symphonists[it] })
 
 
 }

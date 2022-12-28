@@ -2,37 +2,36 @@ package com.bandkid.game.battle
 
 import com.bandkid.game.battle.activeabilities.AbilityEffectBundle
 import com.bandkid.game.battle.activeabilities.AbilityName.BASIC_PHYSICAL_ATTACK
-import com.bandkid.game.battle.activeabilities.ActiveAbilityManager
+import com.bandkid.game.battle.activeabilities.AbilityManager
 import com.bandkid.game.creatures.models.enemies.Enemy
-import com.bandkid.game.models.Party
 import com.bandkid.game.creatures.models.symphonists.Symphonist
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
 
 class ActionManagerTest {
 
-    private val activeAbilityManger = mockk<ActiveAbilityManager>()
-    private val subject = ActionManager(activeAbilityManger)
-    init {
-        subject.instanceParty = Party(mutableListOf(), 1, 1)
+    private val abilityManger = mockk<AbilityManager>()
+    private val subject = ActionManager()
+
+    @Before
+    fun setup () {
+        subject.abilityManager = abilityManger
     }
 
     //region initiateActiveAbility
     @Test
     fun initiateActiveAbility_givenSingleEnemyTargetAsSymphonist_callsDoActiveAbilityOnTarget(){
-        val testEnemy1 = mockk<Enemy>(relaxed = true)
         val testEnemy2 = mockk<Enemy>(relaxed = true)
         val symphonist = mockk<Symphonist>(relaxed = true)
-        subject.instanceEnemies.add(testEnemy1)
-        subject.instanceEnemies.add(testEnemy2)
-        every { activeAbilityManger.doActiveAbility(any(),any(), any()) } returns mockk(relaxed = true)
+        every { abilityManger.doAbility(any(),any(), any()) } returns mockk(relaxed = true)
 
-        subject.initiateActiveAbility(symphonist, BASIC_PHYSICAL_ATTACK, testEnemy2)
+        subject.initiateAbility(symphonist, BASIC_PHYSICAL_ATTACK, testEnemy2)
 
-        verify { activeAbilityManger.doActiveAbility(symphonist, testEnemy2, BASIC_PHYSICAL_ATTACK) }
+        verify { abilityManger.doAbility(symphonist, testEnemy2, BASIC_PHYSICAL_ATTACK) }
     }
 
     @Test
@@ -40,64 +39,47 @@ class ActionManagerTest {
         val testEnemy1 = mockk<Enemy>(relaxed = true)
         val testEnemy2 = mockk<Enemy>(relaxed = true)
         val symphonist = mockk<Symphonist>(relaxed = true)
-        subject.instanceEnemies.add(testEnemy1)
-        subject.instanceEnemies.add(testEnemy2)
-        every { activeAbilityManger.doActiveAbility(any(),any(), any()) } returns mockk(relaxed = true)
+        every { abilityManger.doAbility(any(),any(), any()) } returns mockk(relaxed = true)
 
-        subject.initiateActiveAbility(symphonist, BASIC_PHYSICAL_ATTACK, testEnemy1, testEnemy2)
+        subject.initiateAbility(symphonist, BASIC_PHYSICAL_ATTACK, testEnemy1, testEnemy2)
 
-        verify { activeAbilityManger.doActiveAbility(symphonist, testEnemy1, BASIC_PHYSICAL_ATTACK) }
-        verify { activeAbilityManger.doActiveAbility(symphonist, testEnemy2, BASIC_PHYSICAL_ATTACK) }
+        verify { abilityManger.doAbility(symphonist, testEnemy1, BASIC_PHYSICAL_ATTACK) }
+        verify { abilityManger.doAbility(symphonist, testEnemy2, BASIC_PHYSICAL_ATTACK) }
     }
 
 
     @Test
     fun initiateActiveAbility_givenSingleSymphonistTargetAsEnemy_callsDoActiveAbilityOnTarget(){
         val testEnemy1 = mockk<Enemy>(relaxed = true)
-        val testEnemy2 = mockk<Enemy>(relaxed = true)
         val symphonist1 = mockk<Symphonist>(relaxed = true)
-        val symphonist2 = mockk<Symphonist>(relaxed = true)
-        subject.instanceEnemies.add(testEnemy1)
-        subject.instanceEnemies.add(testEnemy2)
-        subject.instanceParty.orchestra.add(symphonist1)
-        subject.instanceParty.orchestra.add(symphonist2)
-        every { activeAbilityManger.doActiveAbility(any(),any(), any()) } returns mockk(relaxed = true)
+        every { abilityManger.doAbility(any(),any(), any()) } returns mockk(relaxed = true)
 
-        subject.initiateActiveAbility(testEnemy1,  BASIC_PHYSICAL_ATTACK, symphonist1)
+        subject.initiateAbility(testEnemy1,  BASIC_PHYSICAL_ATTACK, symphonist1)
 
-        verify { activeAbilityManger.doActiveAbility(testEnemy1, symphonist1, BASIC_PHYSICAL_ATTACK) }
+        verify { abilityManger.doAbility(testEnemy1, symphonist1, BASIC_PHYSICAL_ATTACK) }
     }
 
     @Test
     fun initiateActiveAbility_givenMultipleSymphonistTargetAsEnemy_callsDoActiveAbilityOnTargets(){
         val testEnemy1 = mockk<Enemy>(relaxed = true)
-        val testEnemy2 = mockk<Enemy>(relaxed = true)
         val symphonist1 = mockk<Symphonist>(relaxed = true)
         val symphonist2 = mockk<Symphonist>(relaxed = true)
-        subject.instanceEnemies.add(testEnemy1)
-        subject.instanceEnemies.add(testEnemy2)
-        subject.instanceParty.orchestra.add(symphonist1)
-        subject.instanceParty.orchestra.add(symphonist2)
-        every { activeAbilityManger.doActiveAbility(any(),any(), any()) } returns mockk(relaxed = true)
+        every { abilityManger.doAbility(any(),any(), any()) } returns mockk(relaxed = true)
 
-        subject.initiateActiveAbility(testEnemy1,  BASIC_PHYSICAL_ATTACK, symphonist1, symphonist2)
+        subject.initiateAbility(testEnemy1,  BASIC_PHYSICAL_ATTACK, symphonist1, symphonist2)
 
-        verify { activeAbilityManger.doActiveAbility(testEnemy1, symphonist1, BASIC_PHYSICAL_ATTACK) }
-        verify { activeAbilityManger.doActiveAbility(testEnemy1, symphonist2, BASIC_PHYSICAL_ATTACK) }
+        verify { abilityManger.doAbility(testEnemy1, symphonist1, BASIC_PHYSICAL_ATTACK) }
+        verify { abilityManger.doAbility(testEnemy1, symphonist2, BASIC_PHYSICAL_ATTACK) }
     }
 
     @Test
     fun initiateActiveAbility_givenEnemyTargetAsSymphonist_changesTargetEnemyStats() {
-        val testEnemy1 = object: Enemy(1, 1, 1, 1, 1, 10, 10) {}
         val testEnemy2 = object: Enemy(1, 1, 1, 1, 1, 10, 10, isCrippled = false, isRaged = false) {}
-        val symphonist = Symphonist(1, 1, 1, 1, 1, 10, 10)
+        val symphonist =  object: Symphonist(1, 1, 1, 1, 1, 10, 10) {}
         val testBundle = AbilityEffectBundle( damageDone = 5, healingDone = 10, shieldingDone = 10, crippleApplied = true, rageApplied = true)
-        subject.instanceEnemies.add(testEnemy1)
-        subject.instanceEnemies.add(testEnemy2)
-        subject.instanceParty.orchestra.add(symphonist)
-        every { activeAbilityManger.doActiveAbility(any(),any(), any()) } returns testBundle
+        every { abilityManger.doAbility(any(),any(), any()) } returns testBundle
 
-        subject.initiateActiveAbility(symphonist, BASIC_PHYSICAL_ATTACK, testEnemy2)
+        subject.initiateAbility(symphonist, BASIC_PHYSICAL_ATTACK, testEnemy2)
 
         assertEquals(15, testEnemy2.currentHealthPoints)
         assertEquals(10, testEnemy2.shieldPoints)
@@ -109,14 +91,11 @@ class ActionManagerTest {
     fun initiateActiveAbility_givenMultipleEnemyTargetsAsSymphonist_changesTargetEnemiesStats() {
         val testEnemy1 = object: Enemy(1, 1, 1, 1, 1, 10, 10) {}
         val testEnemy2 = object: Enemy(1, 1, 1, 1, 1, 10, 10, isCrippled = false, isRaged = false) {}
-        val symphonist = Symphonist(1, 1, 1, 1, 1, 10, 10)
+        val symphonist =  object: Symphonist(1, 1, 1, 1, 1, 10, 10) {}
         val testBundle = AbilityEffectBundle( damageDone = 5, healingDone = 10, shieldingDone = 10, crippleApplied = true, rageApplied = true)
-        subject.instanceEnemies.add(testEnemy1)
-        subject.instanceEnemies.add(testEnemy2)
-        subject.instanceParty.orchestra.add(symphonist)
-        every { activeAbilityManger.doActiveAbility(any(),any(), any()) } returns testBundle
+        every { abilityManger.doAbility(any(),any(), any()) } returns testBundle
 
-        subject.initiateActiveAbility(symphonist, BASIC_PHYSICAL_ATTACK, testEnemy1, testEnemy2)
+        subject.initiateAbility(symphonist, BASIC_PHYSICAL_ATTACK, testEnemy1, testEnemy2)
 
         assertEquals(15, testEnemy1.currentHealthPoints)
         assertEquals(10, testEnemy1.shieldPoints)
@@ -130,18 +109,12 @@ class ActionManagerTest {
 
     @Test
     fun initiateActiveAbility_givenSymphonistTargetAsEnemy_changesTargetSymphonistStats() {
-        val testEnemy1 = object: Enemy(1, 1, 1, 1, 1, 10, 10) {}
         val testEnemy2 = object: Enemy(1, 1, 1, 1, 1, 10, 10) {}
-        val symphonist1 = Symphonist(1, 1, 1, 1, 1, 10, 10)
-        val symphonist2 = Symphonist(1, 1, 1, 1, 1, 10, 10, isCrippled = true, isRaged = true)
+        val symphonist2 =  object: Symphonist(1, 1, 1, 1, 1, 10, 10, isCrippled = true, isRaged = true) {}
         val testBundle = AbilityEffectBundle( damageDone = 5, healingDone = 10, shieldingDone = 10, crippleApplied = false, rageApplied = false)
-        subject.instanceEnemies.add(testEnemy1)
-        subject.instanceEnemies.add(testEnemy2)
-        subject.instanceParty.orchestra.add(symphonist1)
-        subject.instanceParty.orchestra.add(symphonist2)
-        every { activeAbilityManger.doActiveAbility(any(),any(), any()) } returns testBundle
+        every { abilityManger.doAbility(any(),any(), any()) } returns testBundle
 
-        subject.initiateActiveAbility(testEnemy2, BASIC_PHYSICAL_ATTACK, symphonist2)
+        subject.initiateAbility(testEnemy2, BASIC_PHYSICAL_ATTACK, symphonist2)
 
         assertEquals(15, symphonist2.currentHealthPoints)
         assertEquals(10, symphonist2.shieldPoints)
@@ -151,18 +124,13 @@ class ActionManagerTest {
 
     @Test
     fun initiateActiveAbility_givenMultipleSymphonistTargetsAsEnemy_changesTargetSymphonistsStats() {
-        val testEnemy1 = object: Enemy(1, 1, 1, 1, 1, 10, 10) {}
         val testEnemy2 = object: Enemy(1, 1, 1, 1, 1, 10, 10) {}
-        val symphonist1 = Symphonist(1, 1, 1, 1, 1, 10, 10)
-        val symphonist2 = Symphonist(1, 1, 1, 1, 1, 10, 10, isCrippled = true, isRaged = true)
+        val symphonist1 =  object: Symphonist(1, 1, 1, 1, 1, 10, 10) {}
+        val symphonist2 =  object: Symphonist(1, 1, 1, 1, 1, 10, 10, isCrippled = true, isRaged = true) {}
         val testBundle = AbilityEffectBundle( damageDone = 5, healingDone = 10, shieldingDone = 10, crippleApplied = false, rageApplied = false)
-        subject.instanceEnemies.add(testEnemy1)
-        subject.instanceEnemies.add(testEnemy2)
-        subject.instanceParty.orchestra.add(symphonist1)
-        subject.instanceParty.orchestra.add(symphonist2)
-        every { activeAbilityManger.doActiveAbility(any(),any(), any()) } returns testBundle
+        every { abilityManger.doAbility(any(),any(), any()) } returns testBundle
 
-        subject.initiateActiveAbility(testEnemy2, BASIC_PHYSICAL_ATTACK, symphonist1, symphonist2)
+        subject.initiateAbility(testEnemy2, BASIC_PHYSICAL_ATTACK, symphonist1, symphonist2)
 
         assertEquals(15, symphonist1.currentHealthPoints)
         assertEquals(10, symphonist1.shieldPoints)
@@ -177,13 +145,11 @@ class ActionManagerTest {
     @Test
     fun initiateActiveAbility_givenLifestealAbilityAsSymphonist_healsSymphonist() {
         val testEnemy1 = object: Enemy(1, 1, 1, 1, 1, 10, 10) {}
-        val symphonist = Symphonist(1, 1, 1, 1, 1, 10, 10)
+        val symphonist =  object: Symphonist(1, 1, 1, 1, 1, 10, 10) {}
         val testBundle = AbilityEffectBundle( lifestealDone = 10)
-        subject.instanceEnemies.add(testEnemy1)
-        subject.instanceParty.orchestra.add(symphonist)
-        every { activeAbilityManger.doActiveAbility(any(),any(), any()) } returns testBundle
+        every { abilityManger.doAbility(any(),any(), any()) } returns testBundle
 
-        subject.initiateActiveAbility(symphonist,  BASIC_PHYSICAL_ATTACK, testEnemy1)
+        subject.initiateAbility(symphonist,  BASIC_PHYSICAL_ATTACK, testEnemy1)
 
         assertEquals(20, symphonist.currentHealthPoints)
     }
@@ -191,13 +157,11 @@ class ActionManagerTest {
     @Test
     fun initiateActiveAbility_givenLifestealAbilityAsEnemy_healsEnemy() {
         val testEnemy1 = object: Enemy(1, 1, 1, 1, 1, 10, 10) {}
-        val symphonist1 = Symphonist(1, 1, 1, 1, 1, 10, 10)
+        val symphonist1 =  object: Symphonist(1, 1, 1, 1, 1, 10, 10) {}
         val testBundle = AbilityEffectBundle( lifestealDone = 10)
-        subject.instanceEnemies.add(testEnemy1)
-        subject.instanceParty.orchestra.add(symphonist1)
-        every { activeAbilityManger.doActiveAbility(any(),any(), any()) } returns testBundle
+        every { abilityManger.doAbility(any(),any(), any()) } returns testBundle
 
-        subject.initiateActiveAbility(testEnemy1,  BASIC_PHYSICAL_ATTACK, symphonist1)
+        subject.initiateAbility(testEnemy1,  BASIC_PHYSICAL_ATTACK, symphonist1)
 
         assertEquals(20, testEnemy1.currentHealthPoints)
     }
@@ -205,13 +169,11 @@ class ActionManagerTest {
     @Test
     fun initiateActiveAbility_givenNonCripplingOrRagingAbilityAsSymphonist_doesNotChangeRagedOrCrippled() {
         val testEnemy1 = object: Enemy(1, 1, 1, 1, 1, 10, 10, isCrippled = true, isRaged = false) {}
-        val symphonist = Symphonist(1, 1, 1, 1, 1, 10, 10)
+        val symphonist =  object: Symphonist(1, 1, 1, 1, 1, 10, 10) {}
         val testBundle = AbilityEffectBundle()
-        subject.instanceEnemies.add(testEnemy1)
-        subject.instanceParty.orchestra.add(symphonist)
-        every { activeAbilityManger.doActiveAbility(any(),any(), any()) } returns testBundle
+        every { abilityManger.doAbility(any(),any(), any()) } returns testBundle
 
-        subject.initiateActiveAbility(symphonist,  BASIC_PHYSICAL_ATTACK, testEnemy1)
+        subject.initiateAbility(symphonist,  BASIC_PHYSICAL_ATTACK, testEnemy1)
 
         assertTrue(testEnemy1.isCrippled)
         assertFalse(testEnemy1.isRaged)
@@ -220,14 +182,12 @@ class ActionManagerTest {
     @Test
     fun initiateActiveAbility_givenLethalDamage_setsIsDeadToTrue() {
         val testEnemy1 = object: Enemy(1, 1, 1, 1, 1, 10, 10) {}
-        val symphonist1 = Symphonist(1, 1, 1, 1, 1, 10, 10)
+        val symphonist1 =  object: Symphonist(1, 1, 1, 1, 1, 10, 10) {}
         val testBundle = AbilityEffectBundle(damageDone = 10)
-        subject.instanceEnemies.add(testEnemy1)
-        subject.instanceParty.orchestra.add(symphonist1)
-        every { activeAbilityManger.doActiveAbility(any(),any(), any()) } returns testBundle
+        every { abilityManger.doAbility(any(),any(), any()) } returns testBundle
 
-        subject.initiateActiveAbility(testEnemy1,  BASIC_PHYSICAL_ATTACK, symphonist1)
-        subject.initiateActiveAbility(symphonist1,  BASIC_PHYSICAL_ATTACK, testEnemy1)
+        subject.initiateAbility(testEnemy1,  BASIC_PHYSICAL_ATTACK, symphonist1)
+        subject.initiateAbility(symphonist1,  BASIC_PHYSICAL_ATTACK, testEnemy1)
 
 
         assertEquals(0, testEnemy1.currentHealthPoints)
@@ -239,14 +199,12 @@ class ActionManagerTest {
     @Test
     fun initiateActiveAbility_givenDeadCreaturesHealedWithoutResurrect_isDeadRemainsTrueAndHealthZeroed() {
         val testEnemy1 = object: Enemy(1, 1, 1, 1, 1, 10, 0, isDead = true) {}
-        val symphonist1 = Symphonist(1, 1, 1, 1, 1, 10, 0, isDead = true)
+        val symphonist1 =  object: Symphonist(1, 1, 1, 1, 1, 10, 0, isDead = true) {}
         val testBundle = AbilityEffectBundle( healingDone = 1)
-        subject.instanceEnemies.add(testEnemy1)
-        subject.instanceParty.orchestra.add(symphonist1)
-        every { activeAbilityManger.doActiveAbility(any(),any(), any()) } returns testBundle
+        every { abilityManger.doAbility(any(),any(), any()) } returns testBundle
 
-        subject.initiateActiveAbility(testEnemy1,  BASIC_PHYSICAL_ATTACK, symphonist1)
-        subject.initiateActiveAbility(symphonist1,  BASIC_PHYSICAL_ATTACK, testEnemy1)
+        subject.initiateAbility(testEnemy1,  BASIC_PHYSICAL_ATTACK, symphonist1)
+        subject.initiateAbility(symphonist1,  BASIC_PHYSICAL_ATTACK, testEnemy1)
 
 
         assertEquals(0, testEnemy1.currentHealthPoints)
@@ -258,14 +216,12 @@ class ActionManagerTest {
     @Test
     fun initiateActiveAbility_givenDeadCreaturesHealedWithResurrect_isDeadFalseAndHealthIncreased() {
         val testEnemy1 = object: Enemy(1, 1, 1, 1, 1, 10, 0, isDead = true) {}
-        val symphonist1 = Symphonist(1, 1, 1, 1, 1, 10, 0, isDead = true)
+        val symphonist1 =  object: Symphonist(1, 1, 1, 1, 1, 10, 0, isDead = true) {}
         val testBundle = AbilityEffectBundle( healingDone = 1, resurrectTrigger = true)
-        subject.instanceEnemies.add(testEnemy1)
-        subject.instanceParty.orchestra.add(symphonist1)
-        every { activeAbilityManger.doActiveAbility(any(),any(), any()) } returns testBundle
+        every { abilityManger.doAbility(any(),any(), any()) } returns testBundle
 
-        subject.initiateActiveAbility(testEnemy1,  BASIC_PHYSICAL_ATTACK, symphonist1)
-        subject.initiateActiveAbility(symphonist1,  BASIC_PHYSICAL_ATTACK, testEnemy1)
+        subject.initiateAbility(testEnemy1,  BASIC_PHYSICAL_ATTACK, symphonist1)
+        subject.initiateAbility(symphonist1,  BASIC_PHYSICAL_ATTACK, testEnemy1)
 
 
         assertEquals(1, testEnemy1.currentHealthPoints)
@@ -273,7 +229,11 @@ class ActionManagerTest {
         assertFalse(testEnemy1.isDead)
         assertFalse(symphonist1.isDead)
     }
-    //endregion initiateAbility
+    //endregion initiateActiveAbility
+
+    //region initiateDeathAbility
+
+    //endregion initiateDeathAbility
 
 
 

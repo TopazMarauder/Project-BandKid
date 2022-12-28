@@ -1,5 +1,6 @@
 package com.bandkid.game.battle
 
+import com.bandkid.game.battle.activeabilities.AbilityName
 import com.bandkid.game.creatures.models.Creature
 import com.bandkid.game.creatures.models.enemies.Enemy
 import com.bandkid.game.creatures.models.symphonists.Symphonist
@@ -41,7 +42,7 @@ class BattleInstance: BattleLifecycle {
 
     override fun onChoicePhase()  {
         scope.launch {
-                getEnemyActions()
+            getEnemyActions()
             withContext(playerExecutor) {
 
             }
@@ -66,7 +67,7 @@ class BattleInstance: BattleLifecycle {
     private suspend fun getEnemyActions() {
         withContext(defaultExecutor) {
             for (enemy in enemies) {
-                enemy.queueMove(orchestra, enemies)
+                if (!enemy.isDead) enemy.queueMove(orchestra, enemies)
             }
         }
     }
@@ -74,18 +75,27 @@ class BattleInstance: BattleLifecycle {
     private suspend fun performActions() {
         withContext(defaultExecutor) {
             (orchestra + enemies)
-                .sortedBy { -1 * (it.agility.toDouble() + SeedManager.getDouble(0.0, 0.9)) }
+                .sortedBy { agilitySort(it.agility) }
                 .forEach { caster ->
                     validateAction(caster)
-
-
                 }
         }
     }
 
     private fun validateAction(caster: Creature) {
-        if (!caster.isDead) actionManager.initiateActiveAbility(caster, caster.getQueuedMove(), *caster.getQueuedTargets())
+        if (!caster.isDead) actionManager.initiateAbility(caster, caster.getQueuedMove(), *caster.getQueuedTargets())
     }
 
+    private fun checkDeaths(){
+        (orchestra+enemies)
+            .filter { it.shouldActivateDeathAbility ?: false }
+            .sortedBy { agilitySort(it.agility) }
+            .forEach{ caster ->
+                actionManager.initiateAbility(caster, caster.getDeathMove(), *caster.getDeathTargets())
+            }
+
+    }
+
+    private fun agilitySort(agility: Int) = -1 * (agility.toDouble() + SeedManager.getDouble(0.0, 0.9))
 
 }

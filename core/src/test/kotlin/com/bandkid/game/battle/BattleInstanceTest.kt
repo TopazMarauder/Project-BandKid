@@ -1,6 +1,7 @@
 package com.bandkid.game.battle
 
 import com.bandkid.game.AsyncTest
+import com.bandkid.game.battle.activeabilities.AbilityName.BASIC_DEATH_ABILITY
 import com.bandkid.game.battle.activeabilities.AbilityName.BASIC_PHYSICAL_ATTACK
 import com.bandkid.game.creatures.models.enemies.Enemy
 import com.bandkid.game.creatures.models.symphonists.Symphonist
@@ -8,13 +9,10 @@ import com.bandkid.game.player.PlayerProvider
 import com.bandkid.game.utils.SeedManager
 import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import ktx.async.onRenderingThread
 import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -96,10 +94,10 @@ class BattleInstanceTest : AsyncTest() {
         runTest { onRenderingThread { subject.onActionPhase() } }
 
         verifyOrder {
-            actionManager.initiateActiveAbility(enemy2, BASIC_PHYSICAL_ATTACK, symphonist2)
-            actionManager.initiateActiveAbility(symphonist2, BASIC_PHYSICAL_ATTACK, enemy2)
-            actionManager.initiateActiveAbility(enemy1, BASIC_PHYSICAL_ATTACK, symphonist1)
-            actionManager.initiateActiveAbility(symphonist1, BASIC_PHYSICAL_ATTACK, enemy1, enemy2)
+            actionManager.initiateAbility(enemy2, BASIC_PHYSICAL_ATTACK, symphonist2)
+            actionManager.initiateAbility(symphonist2, BASIC_PHYSICAL_ATTACK, enemy2)
+            actionManager.initiateAbility(enemy1, BASIC_PHYSICAL_ATTACK, symphonist1)
+            actionManager.initiateAbility(symphonist1, BASIC_PHYSICAL_ATTACK, enemy1, enemy2)
         }
     }
 
@@ -113,11 +111,11 @@ class BattleInstanceTest : AsyncTest() {
         val enemies = mutableListOf(enemy1, enemy2)
         every { playerProvider.getOrchestra() } returns orchestra
         every { enemyProvider.getEnemies() } returns enemies
-        enemy2.apply {
+        symphonist1.apply {
             every { isDead } returns false
             every { agility } returns 3
             every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
-            every { getQueuedTargets() } returns arrayOf(symphonist2)
+            every { getQueuedTargets() } returns arrayOf(enemy1, enemy2)
         }
         symphonist2.apply {
             every { isDead } returns false
@@ -131,24 +129,22 @@ class BattleInstanceTest : AsyncTest() {
             every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
             every { getQueuedTargets() } returns arrayOf(symphonist1)
         }
-        symphonist1.apply {
+        enemy2.apply {
             every { isDead } returns false
             every { agility } returns 3
             every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
-            every { getQueuedTargets() } returns arrayOf(enemy1, enemy2)
+            every { getQueuedTargets() } returns arrayOf(symphonist2)
         }
         mockkObject(SeedManager)
-
-
         every { SeedManager.getDouble(0.0, 0.9) } returnsMany listOf(.1, .2, .3, .4, .5, .6, .7, .8)
 
         runTest { onRenderingThread { subject.onActionPhase() } }
 
         verifyOrder {
-            actionManager.initiateActiveAbility(symphonist1, BASIC_PHYSICAL_ATTACK, enemy1, enemy2)
-            actionManager.initiateActiveAbility(symphonist2, BASIC_PHYSICAL_ATTACK, enemy2)
-            actionManager.initiateActiveAbility(enemy1, BASIC_PHYSICAL_ATTACK, symphonist1)
-            actionManager.initiateActiveAbility(enemy2, BASIC_PHYSICAL_ATTACK, symphonist2)
+            actionManager.initiateAbility(symphonist1, BASIC_PHYSICAL_ATTACK, enemy1, enemy2)
+            actionManager.initiateAbility(symphonist2, BASIC_PHYSICAL_ATTACK, enemy2)
+            actionManager.initiateAbility(enemy1, BASIC_PHYSICAL_ATTACK, symphonist1)
+            actionManager.initiateAbility(enemy2, BASIC_PHYSICAL_ATTACK, symphonist2)
         }
     }
 
@@ -171,13 +167,11 @@ class BattleInstanceTest : AsyncTest() {
         every { playerProvider.getOrchestra() } returns orchestra
         every { enemyProvider.getEnemies() } returns enemies
         mockkObject(SeedManager)
-
-        every { SeedManager.getDouble(0.0, 0.9) } returnsMany listOf(.1, .2, .3, .4, .5, .6, .7, .8)
+        every { SeedManager.getDouble(0.0, 0.9) } returns .1
 
         runTest { onRenderingThread { subject.onActionPhase() } }
 
-        verify(exactly = 0) { actionManager.initiateActiveAbility(any(), any(), any()) }
-        verify(exactly = 0) { actionManager.initiateActiveAbility(any(), any(), any()) }
+        verify(exactly = 0) { actionManager.initiateAbility(any(), any(), any()) }
     }
 
     //endregion callsInitiateActiveAbility
@@ -185,7 +179,29 @@ class BattleInstanceTest : AsyncTest() {
     //region determineDeaths
     @Test
     fun onActionPhase_givenDeadCreature_callsCreatureOnDeathEffects(){
+        val symphonist1 = mockk<Symphonist> {
+            every { isDead } returns true
+            every { agility } returns 1
+            every { deathAbility } returns BASIC_DEATH_ABILITY
+            every { getQueuedMove() } returns mockk()
+            every { getQueuedTargets() } returns arrayOf(mockk())
+        }
+        val enemy1 = mockk<Enemy> {
+            every { isDead } returns false
+            every { agility } returns 3
+            every { getQueuedMove() } returns mockk()
+            every { getQueuedTargets() } returns arrayOf(mockk())
+        }
+        val orchestra = mutableListOf(symphonist1)
+        val enemies = mutableListOf(enemy1)
+        every { playerProvider.getOrchestra() } returns orchestra
+        every { enemyProvider.getEnemies() } returns enemies
+        mockkObject(SeedManager)
+        every { SeedManager.getDouble(0.0, 0.9) } returns .1
 
+        runTest { onRenderingThread { subject.onActionPhase() } }
+
+        verify { actionManager.initiateAbility(symphonist1, BASIC_DEATH_ABILITY, enemy1) }
     }
 
     //endregion onActionPhase

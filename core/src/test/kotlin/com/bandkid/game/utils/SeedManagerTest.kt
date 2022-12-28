@@ -2,8 +2,7 @@ package com.bandkid.game.utils
 
 
 import com.badlogic.gdx.utils.GdxRuntimeException
-import io.mockk.mockkObject
-import io.mockk.unmockkAll
+import io.mockk.*
 import org.junit.After
 import org.junit.Assert.assertThrows
 import kotlin.random.Random
@@ -43,17 +42,6 @@ class SeedManagerTest() {
     //endregion getSeed
 
     //region getInt
-
-//    @Test
-//    fun getInt_givenNoMinMax_returnsRandomInt() {
-//        val setSeed = subject.getSeed()
-//        val randomNum = getRandomInt()
-//        mockkConstructor(Random::class)
-//        every { anyConstructed<Random>().nextInt() } returns randomNum
-//
-//        assertEquals(randomNum, subject.getInt())
-//        unmockkAll()
-//    }
 
     @Test
     fun getInt_givenNoMinMaxSeedUnset_throwsUninitializedValueException(){
