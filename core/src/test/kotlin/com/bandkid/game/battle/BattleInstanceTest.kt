@@ -204,6 +204,8 @@ class BattleInstanceTest : AsyncTest() {
         verify { actionManager.initiateAbility(symphonist1, BASIC_DEATH_ABILITY, enemy1) }
     }
 
+
+
     //endregion onActionPhase
 
     @After

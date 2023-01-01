@@ -76,25 +76,22 @@ class BattleInstance: BattleLifecycle {
         withContext(defaultExecutor) {
             (orchestra + enemies)
                 .sortedBy { agilitySort(it.agility) }
-                .forEach { caster ->
-                    validateAction(caster)
-                }
+                .map { validateAction(it) }
+                //.forEach { }
         }
     }
 
-    private fun validateAction(caster: Creature) {
-        if (!caster.isDead) actionManager.initiateAbility(caster, caster.getQueuedMove(), *caster.getQueuedTargets())
-    }
+    private fun validateAction(caster: Creature) { if (!caster.isDead) actionManager.initiateAbility(caster, caster.getQueuedMove(), *caster.getQueuedTargets())}
 
-    private fun checkDeaths(){
-        (orchestra+enemies)
-            .filter { it.shouldActivateDeathAbility ?: false }
-            .sortedBy { agilitySort(it.agility) }
-            .forEach{ caster ->
-                actionManager.initiateAbility(caster, caster.getDeathMove(), *caster.getDeathTargets())
-            }
-
-    }
+//    private fun checkDeaths(){
+//        (orchestra+enemies)
+//            .filter { it.shouldActivateDeathAbility ?: false }
+//            .sortedBy { agilitySort(it.agility) }
+//            .forEach{ caster ->
+//                actionManager.initiateAbility(caster, caster.getDeathMove(), *caster.getDeathTargets())
+//            }
+//
+//    }
 
     private fun agilitySort(agility: Int) = -1 * (agility.toDouble() + SeedManager.getDouble(0.0, 0.9))
 
