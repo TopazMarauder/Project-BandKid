@@ -1,6 +1,6 @@
 package com.bandkid.game.creatures.models.symphonists
 
-import com.bandkid.game.battle.activeabilities.AbilityName
+import com.bandkid.game.battle.abilities.AbilityName
 import com.bandkid.game.creatures.models.Creature
 import com.bandkid.game.creatures.models.enemies.Enemy
 import com.bandkid.game.models.Item
@@ -21,6 +21,7 @@ abstract class Symphonist(
     override var isDead: Boolean = false,
     override var shouldActivateDeathAbility: Boolean? = null,
     override val deathAbility: AbilityName? = null,
+    override val passiveAbility: AbilityName? = null,
     override var moveSet: MutableList<AbilityName> = mutableListOf(),
     override var moveInQueue: Pair<Array<Creature>?, AbilityName>? = null,
     var equippedItem: Item? = null
@@ -38,6 +39,10 @@ abstract class Symphonist(
     override fun getDeathMove(): AbilityName = deathAbility ?: AbilityName.NO_ACTION
 
     override fun getDeathTargets(): Array<Creature> = arrayOf()
+
+    override fun getPassiveMove(): AbilityName = passiveAbility ?: AbilityName.NO_ACTION
+
+    override fun getPassiveTargets(): Array<Creature> = arrayOf()
 
     private fun selectAbility() = SeedManager.getInt(0, moveSet.size).let { moveSet[it] }
 

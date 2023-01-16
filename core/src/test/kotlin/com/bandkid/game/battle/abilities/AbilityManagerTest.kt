@@ -1,6 +1,6 @@
-package com.bandkid.game.battle.activeabilities
+package com.bandkid.game.battle.abilities
 
-import com.bandkid.game.battle.activeabilities.AbilityName.*
+import com.bandkid.game.battle.abilities.AbilityName.*
 import com.bandkid.game.creatures.models.symphonists.Symphonist
 import io.mockk.every
 import io.mockk.mockk

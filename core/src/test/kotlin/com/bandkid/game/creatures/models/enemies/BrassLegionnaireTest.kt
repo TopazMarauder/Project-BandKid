@@ -1,6 +1,6 @@
 package com.bandkid.game.creatures.models.enemies
 
-import com.bandkid.game.battle.activeabilities.AbilityName
+import com.bandkid.game.battle.abilities.AbilityName
 import com.bandkid.game.creatures.models.symphonists.Symphonist
 import com.bandkid.game.utils.SeedManager
 import io.mockk.*

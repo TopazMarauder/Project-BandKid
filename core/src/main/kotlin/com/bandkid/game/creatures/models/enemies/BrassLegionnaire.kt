@@ -1,6 +1,6 @@
 package com.bandkid.game.creatures.models.enemies
 
-import com.bandkid.game.battle.activeabilities.AbilityName
+import com.bandkid.game.battle.abilities.AbilityName
 
 class BrassLegionnaire : Enemy(
     9,

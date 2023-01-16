@@ -1,10 +1,9 @@
 package com.bandkid.game.creatures.models.enemies
 
-import com.bandkid.game.battle.activeabilities.AbilityName
+import com.bandkid.game.battle.abilities.AbilityName
 import com.bandkid.game.creatures.models.Creature
 import com.bandkid.game.creatures.models.symphonists.Symphonist
 import com.bandkid.game.utils.SeedManager
-import kotlin.random.Random
 
 abstract class Enemy(
     override val strength: Int,
@@ -20,6 +19,7 @@ abstract class Enemy(
     override var isDead: Boolean = false,
     override var shouldActivateDeathAbility: Boolean? = null,
     override val deathAbility: AbilityName? = null,
+    override val passiveAbility: AbilityName? = null,
     override var moveSet: MutableList<AbilityName> = mutableListOf(),
     override var moveInQueue: Pair<Array<Creature>?, AbilityName>? = null
 ) : Creature {
@@ -31,6 +31,10 @@ abstract class Enemy(
     override fun getQueuedMove(): AbilityName = moveInQueue?.second ?: AbilityName.NO_ACTION
 
     override fun getQueuedTargets(): Array<Creature> = moveInQueue?.first ?: arrayOf()
+
+    override fun getPassiveMove(): AbilityName = passiveAbility ?: AbilityName.NO_ACTION
+
+    override fun getPassiveTargets(): Array<Creature> = arrayOf()
 
     override fun getDeathMove(): AbilityName = deathAbility ?: AbilityName.NO_ACTION
 

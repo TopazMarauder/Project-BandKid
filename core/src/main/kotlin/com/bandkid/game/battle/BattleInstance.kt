@@ -1,6 +1,5 @@
 package com.bandkid.game.battle
 
-import com.bandkid.game.battle.activeabilities.AbilityName
 import com.bandkid.game.creatures.models.Creature
 import com.bandkid.game.creatures.models.enemies.Enemy
 import com.bandkid.game.creatures.models.symphonists.Symphonist
@@ -37,6 +36,7 @@ class BattleInstance: BattleLifecycle {
     }
 
     override fun onPassivePhase() {
+
         super.onPassivePhase()
     }
 
@@ -72,26 +72,46 @@ class BattleInstance: BattleLifecycle {
         }
     }
 
-    private suspend fun performActions() {
+    private suspend fun performPassives() {
         withContext(defaultExecutor) {
-            (orchestra + enemies)
-                .sortedBy { agilitySort(it.agility) }
-                .map { validateAction(it) }
-                //.forEach { }
+            getSortedCharacters()
+                .map { validatePassive(it) }
+                .forEach{ if(it) checkDeaths()}
         }
     }
 
-    private fun validateAction(caster: Creature) { if (!caster.isDead) actionManager.initiateAbility(caster, caster.getQueuedMove(), *caster.getQueuedTargets())}
+    private suspend fun performActions() {
+        withContext(defaultExecutor) {
+            getSortedCharacters()
+                .map { validateAction(it) }
+                .forEach{ if(it) checkDeaths()}
+        }
+    }
 
-//    private fun checkDeaths(){
-//        (orchestra+enemies)
-//            .filter { it.shouldActivateDeathAbility ?: false }
-//            .sortedBy { agilitySort(it.agility) }
-//            .forEach{ caster ->
-//                actionManager.initiateAbility(caster, caster.getDeathMove(), *caster.getDeathTargets())
-//            }
-//
-//    }
+    private fun validatePassive(caster: Creature) : Boolean{
+        return if (!caster.isDead) {
+            actionManager.initiatePassiveAbility(caster)
+        } else false
+    }
+
+    private fun validateAction(caster: Creature) : Boolean{
+        return if (!caster.isDead) {
+            actionManager.initiateActiveAbility(caster)
+        } else false
+    }
+
+    private fun checkDeaths(){
+        (orchestra+enemies)
+            .filter { it.shouldActivateDeathAbility ?: false }
+            .sortedBy { agilitySort(it.agility) }
+            .map{ caster ->
+                actionManager.initiateDeathAbility(caster)
+            }
+            .forEach{ if(it) checkDeaths()}
+
+    }
+
+    private fun getSortedCharacters() = (orchestra + enemies).sortedBy { agilitySort(it.agility) }
 
     private fun agilitySort(agility: Int) = -1 * (agility.toDouble() + SeedManager.getDouble(0.0, 0.9))
 

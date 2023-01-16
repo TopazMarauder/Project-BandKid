@@ -1,6 +1,6 @@
-package com.bandkid.game.battle.activeabilities
+package com.bandkid.game.battle.abilities
 
-import com.bandkid.game.battle.activeabilities.AbilityName.*
+import com.bandkid.game.battle.abilities.AbilityName.*
 import com.bandkid.game.creatures.models.Creature
 import javax.inject.Inject
 
@@ -14,7 +14,8 @@ class AbilityManager @Inject constructor(
             BASIC_PHYSICAL_ATTACK -> activeAbilityEffects.applyBasicPhysicalAttack(caster, target)
             BASIC_MAGICAL_ATTACK -> activeAbilityEffects.applyBasicMagicalAttack(caster, target)
             PHYSICAL_LIFESTEAL_ATTACK -> activeAbilityEffects.applyPhysicalLifestealAttack(caster, target)
-            BASIC_DEATH_ABILITY -> EMPTY_BUNDLE //TODO FILL
+            NO_ACTION_DEATH -> EMPTY_BUNDLE
+            NO_ACTION_PASSIVE -> EMPTY_BUNDLE
     }
 
     companion object{

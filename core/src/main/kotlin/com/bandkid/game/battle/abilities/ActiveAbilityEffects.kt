@@ -1,4 +1,4 @@
-package com.bandkid.game.battle.activeabilities
+package com.bandkid.game.battle.abilities
 
 import com.bandkid.game.creatures.models.Creature
 import javax.inject.Inject
