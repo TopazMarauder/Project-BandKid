@@ -297,7 +297,7 @@ class ActionManagerTest {
 
     @Test
     fun initiateAbility_givenAKillingBlow_returnsTrue() {
-        val testEnemy1 = object: Enemy(1, 1, 1, 1, 1, 10, 1, isDead = false,) { }
+        val testEnemy1 = object: Enemy(1, 1, 1, 1, 1, 10, 1, isDead = false) { }
         val symphonist1 =  object: Symphonist(1, 1, 1, 1, 1, 10, 1, isDead = false) {}
         val testBundle = AbilityEffectBundle( damageDone = 1)
         every { abilityManger.doAbility(any(),any(), any()) } returns testBundle
@@ -321,7 +321,7 @@ class ActionManagerTest {
         assertEquals(false, result)
     }
 
-    //endregion initiateAbilitygeneral
+    //endregion initiateAbility general
 
 
 

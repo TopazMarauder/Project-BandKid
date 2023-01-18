@@ -5,7 +5,6 @@ import com.bandkid.game.creatures.models.Creature
 import com.bandkid.game.creatures.models.enemies.Enemy
 import com.bandkid.game.models.Item
 import com.bandkid.game.utils.SeedManager
-import kotlin.random.Random
 
 abstract class Symphonist(
     override val strength: Int,

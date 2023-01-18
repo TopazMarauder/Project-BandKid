@@ -36,7 +36,9 @@ class BattleInstance: BattleLifecycle {
     }
 
     override fun onPassivePhase() {
-
+        scope.launch {
+            performPassives()
+        }
         super.onPassivePhase()
     }
 
@@ -75,16 +77,16 @@ class BattleInstance: BattleLifecycle {
     private suspend fun performPassives() {
         withContext(defaultExecutor) {
             getSortedCharacters()
-                .map { validatePassive(it) }
-                .forEach{ if(it) checkDeaths()}
+                .filter { validatePassive(it) }
+                .map { checkDeaths() }
         }
     }
 
     private suspend fun performActions() {
         withContext(defaultExecutor) {
             getSortedCharacters()
-                .map { validateAction(it) }
-                .forEach{ if(it) checkDeaths()}
+                .filter { validateAction(it) }
+                .map { checkDeaths() }
         }
     }
 
@@ -104,10 +106,10 @@ class BattleInstance: BattleLifecycle {
         (orchestra+enemies)
             .filter { it.shouldActivateDeathAbility ?: false }
             .sortedBy { agilitySort(it.agility) }
-            .map{ caster ->
+            .filter{ caster ->
                 actionManager.initiateDeathAbility(caster)
             }
-            .forEach{ if(it) checkDeaths()}
+            .map{ checkDeaths()}
 
     }
 
