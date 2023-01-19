@@ -1,12 +1,40 @@
 package com.bandkid.game.utils
 
+import ktx.app.gdxError
 import kotlin.random.Random
 
-class SeedManager  {
+object SeedManager  {
     private var gameSeed: Int? = null
 
     fun getSeed(setSeed: Int? = null): Int =
         (setSeed ?: gameSeed ?: Random.nextInt()).also {gameSeed = it}
 
+    //region getInt
+    fun getInt(min: Int, max: Int): Int =
+        gameSeed?.let { Random(it).nextInt(min, max) }
+            ?: gdxError("Uninitialized Seed getInt", UninitializedValueException("Uninitialized Seed getInt"))
+
+    fun getInt( max: Int): Int =
+        gameSeed?.let { Random(it).nextInt(max) }
+            ?: gdxError("Uninitialized Seed getInt", UninitializedValueException("Uninitialized Seed getInt"))
+
+    fun getInt(): Int =
+        gameSeed?.let { Random(it).nextInt() }
+            ?: gdxError("Uninitialized Seed getInt", UninitializedValueException("Uninitialized Seed getInt"))
+    //endregion getInt
+
+    //region getDouble
+    fun getDouble(min: Double, max: Double): Double =
+        gameSeed?.let { Random(it).nextDouble(min, max) }
+            ?: gdxError("Uninitialized Seed getDouble", UninitializedValueException("Uninitialized Seed getDouble"))
+
+    fun getDouble( max: Double): Double =
+        gameSeed?.let { Random(it).nextDouble(max) }
+            ?: gdxError("Uninitialized Seed getDouble", UninitializedValueException("Uninitialized Seed getDouble"))
+
+    fun getDouble(): Double =
+        gameSeed?.let { Random(it).nextDouble() }
+            ?: gdxError("Uninitialized Seed getDouble", UninitializedValueException("Uninitialized Seed getDouble"))
+    //endregion getDouble
 
 }

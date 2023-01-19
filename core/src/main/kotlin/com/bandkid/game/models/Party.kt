@@ -1,23 +1,9 @@
 package com.bandkid.game.models
 
+import com.bandkid.game.creatures.models.symphonists.Symphonist
+
 data class Party(
-    var orchestra: Array<Symphonist>,
+    var orchestra: MutableList<Symphonist>,
     var currentSize: Int,
     var maxSize: Int
-) {
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Party
-
-        if (!orchestra.contentEquals(other.orchestra)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return orchestra.contentHashCode()
-    }
-}
+)
