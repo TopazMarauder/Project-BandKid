@@ -60,7 +60,11 @@ class BattleInstance: BattleLifecycle {
     }
 
     override fun onEndPhase() {
-
+        if (enemiesWiped() || orchestraWiped()){
+            onDestroy()
+        } else {
+            onPassivePhase()
+        }
     }
 
     override fun onDestroy() {
@@ -112,6 +116,10 @@ class BattleInstance: BattleLifecycle {
             .map{ checkDeaths()}
 
     }
+
+    private fun enemiesWiped() = enemies.all { it.isDead }
+
+    private fun orchestraWiped() = orchestra.all { it.isDead }
 
     private fun getSortedCharacters() = (orchestra + enemies).sortedBy { agilitySort(it.agility) }
 

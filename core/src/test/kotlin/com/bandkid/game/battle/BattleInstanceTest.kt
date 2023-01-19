@@ -40,9 +40,9 @@ class BattleInstanceTest : AsyncTest() {
     //region onChoicePhase
     @Test
     fun onChoicePhase_getsEnemyMoves() {
-        val orchestra = mockk<MutableList<Symphonist>>(relaxed = true)
-        val enemy1 = mockk<Enemy>(relaxed = true)
-        val enemy2 = mockk<Enemy>(relaxed = true)
+        val orchestra = mockk<MutableList<Symphonist>>(relaxed = true) { every { all { it.isDead } } returns true }
+        val enemy1 = mockk<Enemy>(relaxed = true) { every { isDead } returns false andThen true}
+        val enemy2 = mockk<Enemy>(relaxed = true)  { every { isDead } returns false andThen true}
         val enemies = mutableListOf(enemy1, enemy2)
         every { playerProvider.getOrchestra() } returns orchestra
         every { enemyProvider.getEnemies() } returns enemies
@@ -66,19 +66,19 @@ class BattleInstanceTest : AsyncTest() {
         every { playerProvider.getOrchestra() } returns orchestra
         every { enemyProvider.getEnemies() } returns enemies
         symphonist2.apply {
-            every { isDead } returns false
+            every { isDead } returns false andThen true
             every { agility } returns 3
             every { getPassiveMove() } returns BASIC_PHYSICAL_ATTACK
             every { getPassiveTargets() } returns arrayOf(symphonist2)
         }
         enemy1.apply {
-            every { isDead } returns false
+            every { isDead } returns false andThen true
             every { agility } returns 2
             every { getPassiveMove() } returns BASIC_PHYSICAL_ATTACK
             every { getPassiveTargets() } returns arrayOf(enemy1)
         }
         symphonist1.apply {
-            every { isDead } returns false
+            every { isDead } returns false andThen true
             every { agility } returns 1
             every { getPassiveMove() } returns BASIC_PHYSICAL_ATTACK
             every { getPassiveTargets() } returns arrayOf(symphonist1)
@@ -104,25 +104,25 @@ class BattleInstanceTest : AsyncTest() {
         every { playerProvider.getOrchestra() } returns orchestra
         every { enemyProvider.getEnemies() } returns enemies
         symphonist1.apply {
-            every { isDead } returns false
+            every { isDead } returns false andThen true
             every { agility } returns 3
             every { getPassiveMove() } returns BASIC_PHYSICAL_ATTACK
             every { getPassiveTargets() } returns arrayOf(enemy1, enemy2)
         }
         symphonist2.apply {
-            every { isDead } returns false
+            every { isDead } returns false andThen true
             every { agility } returns 3
             every { getPassiveMove() } returns BASIC_PHYSICAL_ATTACK
             every { getPassiveTargets() } returns arrayOf(enemy2)
         }
         enemy1.apply {
-            every { isDead } returns false
+            every { isDead } returns false andThen true
             every { agility } returns 3
             every { getPassiveMove() } returns BASIC_PHYSICAL_ATTACK
             every { getPassiveTargets() } returns arrayOf(symphonist1)
         }
         enemy2.apply {
-            every { isDead } returns false
+            every { isDead } returns false andThen true
             every { agility } returns 3
             every { getPassiveMove() } returns BASIC_PHYSICAL_ATTACK
             every { getPassiveTargets() } returns arrayOf(symphonist2)
@@ -181,25 +181,25 @@ class BattleInstanceTest : AsyncTest() {
         every { playerProvider.getOrchestra() } returns orchestra
         every { enemyProvider.getEnemies() } returns enemies
         enemy2.apply {
-            every { isDead } returns false
+            every { isDead } returns false andThen true
             every { agility } returns 4
             every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
             every { getQueuedTargets() } returns arrayOf(symphonist2)
         }
         symphonist2.apply {
-            every { isDead } returns false
+            every { isDead } returns false andThen true
             every { agility } returns 3
             every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
             every { getQueuedTargets() } returns arrayOf(enemy2)
         }
         enemy1.apply {
-            every { isDead } returns false
+            every { isDead } returns false andThen true
             every { agility } returns 2
             every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
             every { getQueuedTargets() } returns arrayOf(symphonist1)
         }
         symphonist1.apply {
-            every { isDead } returns false
+            every { isDead } returns false andThen true
             every { agility } returns 1
             every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
             every { getQueuedTargets() } returns arrayOf(enemy1, enemy2)
@@ -228,25 +228,25 @@ class BattleInstanceTest : AsyncTest() {
         every { playerProvider.getOrchestra() } returns orchestra
         every { enemyProvider.getEnemies() } returns enemies
         symphonist1.apply {
-            every { isDead } returns false
+            every { isDead } returns false andThen true
             every { agility } returns 3
             every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
             every { getQueuedTargets() } returns arrayOf(enemy1, enemy2)
         }
         symphonist2.apply {
-            every { isDead } returns false
+            every { isDead } returns false andThen true
             every { agility } returns 3
             every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
             every { getQueuedTargets() } returns arrayOf(enemy2)
         }
         enemy1.apply {
-            every { isDead } returns false
+            every { isDead } returns false andThen true
             every { agility } returns 3
             every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
             every { getQueuedTargets() } returns arrayOf(symphonist1)
         }
         enemy2.apply {
-            every { isDead } returns false
+            every { isDead } returns false andThen true
             every { agility } returns 3
             every { getQueuedMove() } returns BASIC_PHYSICAL_ATTACK
             every { getQueuedTargets() } returns arrayOf(symphonist2)
@@ -305,7 +305,7 @@ class BattleInstanceTest : AsyncTest() {
             every { getQueuedTargets() } returns arrayOf(mockk())
         }
         val enemy1 = mockk<Enemy> {
-            every { isDead } returns false
+            every { isDead } returns false andThen true
             every { shouldActivateDeathAbility } returns false
             every { agility } returns 3
             every { getQueuedMove() } returns mockk()
