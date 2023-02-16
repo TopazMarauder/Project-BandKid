@@ -46,7 +46,6 @@ class BattleInstance: BattleLifecycle {
         scope.launch {
             getEnemyActions()
             withContext(playerExecutor) {
-
             }
         }
         super.onChoicePhase()

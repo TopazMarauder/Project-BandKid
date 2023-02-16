@@ -1,13 +1,14 @@
 package com.bandkid.game
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.Texture.TextureFilter.Linear
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
-import com.bandkid.game.di.CoreComponent
-import com.bandkid.game.di.CoreModule
+import com.bandkid.game.di.DaggerCoreComponent
+import com.bandkid.game.menus.LoadingScreen
 import com.bandkid.game.menus.MainMenuScreen
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
@@ -18,24 +19,31 @@ import ktx.graphics.use
 
 class BandKidGame : KtxGame<KtxScreen>() {
 
-    lateinit var batch: SpriteBatch
-    lateinit var font: BitmapFont
+    val batch by lazy { SpriteBatch() }
+    val font: BitmapFont by lazy { FreeTypeFontGenerator(Gdx.files.internal(COUNTDOWN_FONT)).let {
+        it.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply { size = 20 })
+            .apply { it.dispose() }
+    } }
+    val assets = AssetManager()
 
-    lateinit var coreComponent: CoreComponent
 
     override fun create() {
-
-        batch = SpriteBatch()
-        font = FreeTypeFontGenerator(Gdx.files.internal(COUNTDOWN_FONT)).let {
-            it.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply { size = 20 })
-                .apply { it.dispose() }
-        }
-        addScreen(MainMenuScreen(this))
-        addScreen(FirstScreen())
-        setScreen<MainMenuScreen>()
+        addScreen(LoadingScreen(this))
+        setScreen<LoadingScreen>()
+        super.create()
     }
 
+    override fun dispose() {
+        batch.dispose()
+        font.dispose()
+        assets.dispose()
+        super.dispose()
+    }
+
+
     companion object {
+        fun createGame(): BandKidGame { return  DaggerCoreComponent.factory().create().game() }
+
         const val COUNTDOWN_FONT = "countdown.ttf"
     }
 }

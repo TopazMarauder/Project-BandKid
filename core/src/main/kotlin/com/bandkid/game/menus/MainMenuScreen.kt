@@ -1,17 +1,17 @@
 package com.bandkid.game.menus
 
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input.TextInputListener
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.utils.ScreenUtils
 import com.bandkid.game.BandKidGame
-import com.bandkid.game.player.PlayerProvider
+import com.bandkid.game.utils.SeedManager
 import ktx.app.KtxScreen
-import javax.inject.Inject
+import ktx.graphics.use
 
 class MainMenuScreen  (val game: BandKidGame) : KtxScreen {
     private var orthographicCamera: OrthographicCamera = OrthographicCamera().apply { setToOrtho(false, 800f, 400f) }
 
-    @Inject
-    lateinit var playerProvider: PlayerProvider
 
 
     override fun show() {}
@@ -22,14 +22,24 @@ class MainMenuScreen  (val game: BandKidGame) : KtxScreen {
         orthographicCamera.update()
 
         with(game){
-            batch.projectionMatrix.set(orthographicCamera.combined)
-            batch.begin()
-            font.draw(batch, "Brass and Blood", 100f, 150f)
-            font.draw(batch, playerProvider.getPartySize().first.toString(), 100f, 100f)
-            batch.end()
+            batch.projectionMatrix = orthographicCamera.combined
+            batch.use {
+                font.draw(batch, "Brass and Blood", 100f, 150f)
+                font.draw(batch, SeedManager.getSeed().toString(), 50f, 250f)
+                //font.draw()
+            }
 
+
+
+            if (Gdx.input.isTouched){
+                //addScreen()
+                game.removeScreen<MainMenuScreen>()
+                dispose()
+            }
         }
-        dispose()
+
+
+
     }
 
     override fun resize(width: Int, height: Int) {}

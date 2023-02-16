@@ -1,11 +1,14 @@
 package com.bandkid.game.player
 
 import com.bandkid.game.creatures.models.symphonists.Symphonist
+import com.bandkid.game.models.Coordinates
+import com.bandkid.game.models.Party
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
-class PlayerProvider @Inject constructor(private var playerData: PlayerData) {
+object PlayerProvider {
+
+    private var playerData: PlayerData = PlayerData.emptyData()
 
     fun getPartySize() = playerData.party.let { Pair(it.currentSize, it.maxSize) }
 
@@ -13,6 +16,5 @@ class PlayerProvider @Inject constructor(private var playerData: PlayerData) {
 
     fun setOrchestra(orchestra: MutableList<Symphonist>) { playerData.party.orchestra = orchestra}
 
-    fun getFloor() = 1 //TODO() add floor to player data, var, setter?
-
+    fun getFloor() = 1 //TODO add floor to player data, var, setter?
 }
