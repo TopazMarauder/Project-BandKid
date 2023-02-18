@@ -9,7 +9,6 @@ import ktx.assets.load
 
 //region sounds
 enum class SoundAssets(val path: String) {
-    Drop("sounds/drop.wav")
 }
 
 inline fun AssetManager.load(asset: SoundAssets) = load<Sound>(asset.path)
@@ -18,7 +17,7 @@ inline operator fun AssetManager.get(asset: SoundAssets) = getAsset<Sound>(asset
 
 //region music
 enum class MusicAssets(val path: String) {
-    Rain("music/rain.mp3")
+    Base("music/base.flac")
 }
 
 inline fun AssetManager.load(asset: MusicAssets) = load<Music>(asset.path)

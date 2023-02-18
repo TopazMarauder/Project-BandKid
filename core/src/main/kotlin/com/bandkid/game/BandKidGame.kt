@@ -2,8 +2,10 @@ package com.bandkid.game
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.Texture.TextureFilter.Linear
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
@@ -16,27 +18,34 @@ import ktx.app.clearScreen
 import ktx.assets.disposeSafely
 import ktx.assets.toInternalFile
 import ktx.graphics.use
+import ktx.inject.Context
+import ktx.inject.register
 
 class BandKidGame : KtxGame<KtxScreen>() {
 
-    val batch by lazy { SpriteBatch() }
     val font: BitmapFont by lazy { FreeTypeFontGenerator(Gdx.files.internal(COUNTDOWN_FONT)).let {
         it.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply { size = 20 })
             .apply { it.dispose() }
     } }
-    val assets = AssetManager()
+    private val context = Context()
 
 
     override fun create() {
-        addScreen(LoadingScreen(this))
+        context.register {
+            bindSingleton<Batch>(SpriteBatch())
+            bindSingleton(font)
+            bindSingleton(AssetManager())
+            bindSingleton(OrthographicCamera().apply { setToOrtho(false, 800f, 480f) })
+
+            addScreen(LoadingScreen(this@BandKidGame, inject(), inject(), inject(), inject()))
+        }
         setScreen<LoadingScreen>()
         super.create()
     }
 
     override fun dispose() {
-        batch.dispose()
         font.dispose()
-        assets.dispose()
+        context.dispose()
         super.dispose()
     }
 

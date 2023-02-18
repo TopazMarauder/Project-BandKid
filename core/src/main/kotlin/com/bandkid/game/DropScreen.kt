@@ -18,13 +18,19 @@ import ktx.app.KtxScreen
 import ktx.ashley.entity
 import ktx.ashley.get
 import ktx.ashley.with
+import ktx.assets.invoke
+import ktx.assets.pool
 import ktx.collections.iterate
 import ktx.graphics.use
 import ktx.log.logger
 
 private val log = logger<DropScreen>()
 
-class DropScreen (val game: BandKidGame) : KtxScreen {
+class DropScreen (private val game: BandKidGame,
+                  private val batch: Batch,
+                  private val font: BitmapFont,
+                  private val assets: AssetManager,
+                  private val camera: OrthographicCamera) : KtxScreen {
     // load the images for the droplet & bucket, 64x64 pixels each
     private val dropImage = Texture(Gdx.files.internal("images/drop.png"))
     private val bucketImage = Texture(Gdx.files.internal("images/bucket.png"))
@@ -33,7 +39,6 @@ class DropScreen (val game: BandKidGame) : KtxScreen {
     private val rainMusic = Gdx.audio.newMusic(Gdx.files.internal("music/rain.mp3")).apply { isLooping = true }
     // The camera ensures we can render using our target resolution of 800x480
     //    pixels no matter what the screen resolution is.
-    private val camera = OrthographicCamera().apply { setToOrtho(false, 800f, 480f) }
     // create a Rectangle to logically represent the bucket
     // center the bucket horizontally
     // bottom left bucket corner is 20px above
@@ -41,12 +46,13 @@ class DropScreen (val game: BandKidGame) : KtxScreen {
     // create the touchPos to store mouse click position
     private val touchPos = Vector3()
     // create the raindrops array and spawn the first raindrop
-    private val raindrops = Array<Rectangle>() // gdx, not Kotlin Array
+    private val raindropsPool = pool { Rectangle() }
+    private val activeRaindrops = Array<Rectangle>()
     private var lastDropTime = 0L
     private var dropsGathered = 0
 
     private fun spawnRaindrop() {
-        raindrops.add(Rectangle(MathUtils.random(0f, 800f - 64f), 480f, 64f, 64f))
+        activeRaindrops.add(raindropsPool().set(MathUtils.random(0f, 800f - 64f), 480f, 64f, 64f))
         lastDropTime = TimeUtils.nanoTime()
     }
 
@@ -55,14 +61,14 @@ class DropScreen (val game: BandKidGame) : KtxScreen {
         camera.update()
 
         // tell the SpriteBatch to render in the coordinate system specified by the camera.
-        game.batch.projectionMatrix = camera.combined
+        batch.projectionMatrix = camera.combined
 
         // begin a new batch and draw the bucket and all drops
-        game.batch.use {
-            game.font.draw(game.batch, "Drops Collected: $dropsGathered", 0f, 480f)
-            game.batch.draw(bucketImage, bucket.x, bucket.y, bucket.width, bucket.height)
-            raindrops.forEach{
-                game.batch.draw(dropImage, it.x, it.y)
+        batch.use {
+            font.draw(batch, "Drops Collected: $dropsGathered", 0f, 480f)
+            batch.draw(bucketImage, bucket.x, bucket.y, bucket.width, bucket.height)
+            activeRaindrops.forEach{
+                batch.draw(dropImage, it.x, it.y)
             }
         }
 
@@ -90,17 +96,20 @@ class DropScreen (val game: BandKidGame) : KtxScreen {
         // move the raindrops, remove any that are beneath the bottom edge of the
         //    screen or that hit the bucket.  In the latter case, play back a sound
         //    effect also
-        raindrops.iterate { raindrop, iterator ->
+        activeRaindrops.iterate { raindrop, iterator ->
             raindrop.y -= 200 * delta
             if (raindrop.y + 64 < 0) {
                 iterator.remove()
-                log.debug { "Drop Missed" }
+                raindropsPool(raindrop)
+                log.debug { "Drop Missed Pool free: ${raindropsPool.free}" }
             }
 
             if (raindrop.overlaps(bucket)) {
                 dropsGathered++
                 dropSound.play()
                 iterator.remove()
+                raindropsPool(raindrop)
+                log.debug{"Pool Free ${raindropsPool.free}"}
             }
         }
     }
