@@ -1,4 +1,4 @@
-package com.bandkid.game.models
+package com.bandkid.game.player.models
 
 import com.bandkid.game.creatures.models.symphonists.Symphonist
 

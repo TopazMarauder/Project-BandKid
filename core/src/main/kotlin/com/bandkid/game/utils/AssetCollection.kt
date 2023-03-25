@@ -17,7 +17,7 @@ inline operator fun AssetManager.get(asset: SoundAssets) = getAsset<Sound>(asset
 
 //region music
 enum class MusicAssets(val path: String) {
-    Base("music/base.flac")
+    Base("music/base.ogg")
 }
 
 inline fun AssetManager.load(asset: MusicAssets) = load<Music>(asset.path)

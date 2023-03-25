@@ -3,27 +3,22 @@ package com.bandkid.game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.Texture.TextureFilter.Linear
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
-import com.bandkid.game.di.DaggerCoreComponent
-import com.bandkid.game.menus.LoadingScreen
-import com.bandkid.game.menus.MainMenuScreen
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
+import com.bandkid.game.ui.screens.LoadingScreen
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
-import ktx.app.clearScreen
-import ktx.assets.disposeSafely
-import ktx.assets.toInternalFile
-import ktx.graphics.use
 import ktx.inject.Context
 import ktx.inject.register
+import ktx.scene2d.Scene2DSkin
+import ktx.style.label
 
 class BandKidGame : KtxGame<KtxScreen>() {
 
-    val font: BitmapFont by lazy { FreeTypeFontGenerator(Gdx.files.internal(COUNTDOWN_FONT)).let {
+    private val countdownFont: BitmapFont by lazy { FreeTypeFontGenerator(Gdx.files.internal(COUNTDOWN_FONT)).let {
         it.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply { size = 20 })
             .apply { it.dispose() }
     } }
@@ -31,10 +26,12 @@ class BandKidGame : KtxGame<KtxScreen>() {
 
 
     override fun create() {
+        //Scene2DSkin.defaultSkin = makeSkin()//TODO MAKE CUSTOM SKIN
         context.register {
             bindSingleton<Batch>(SpriteBatch())
-            bindSingleton(font)
+            bindSingleton(countdownFont)
             bindSingleton(AssetManager())
+            //bindSingleton(Skin())
             bindSingleton(OrthographicCamera().apply { setToOrtho(false, 800f, 480f) })
 
             addScreen(LoadingScreen(this@BandKidGame, inject(), inject(), inject(), inject()))
@@ -44,32 +41,19 @@ class BandKidGame : KtxGame<KtxScreen>() {
     }
 
     override fun dispose() {
-        font.dispose()
+        countdownFont.dispose()
         context.dispose()
         super.dispose()
     }
 
-
-    companion object {
-        fun createGame(): BandKidGame { return  DaggerCoreComponent.factory().create().game() }
-
-        const val COUNTDOWN_FONT = "countdown.ttf"
-    }
-}
-
-class FirstScreen : KtxScreen {
-    private val image = Texture("logo.png".toInternalFile(), true).apply { setFilter(Linear, Linear) }
-    private val batch = SpriteBatch()
-
-    override fun render(delta: Float) {
-        clearScreen(red = 0.7f, green = 0.7f, blue = 0.7f)
-        batch.use {
-            it.draw(image, 100f, 160f)
+    private fun makeSkin(): Skin {
+        return Skin().apply {
+            label { this.font = countdownFont }
         }
     }
 
-    override fun dispose() {
-        image.disposeSafely()
-        batch.disposeSafely()
+
+    companion object {
+        const val COUNTDOWN_FONT = "countdown.ttf"
     }
 }

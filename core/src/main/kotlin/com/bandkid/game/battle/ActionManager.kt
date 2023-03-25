@@ -8,7 +8,6 @@ import javax.inject.Inject
 
 class ActionManager {
 
-    @Inject
     lateinit var abilityManager: AbilityManager
 
     /**
@@ -36,20 +35,4 @@ class ActionManager {
         }
         return isLethal
     }
-
-    private fun Creature.applyEffectBundle(effectBundle: AbilityEffectBundle, caster: Creature): Boolean? {
-        if (effectBundle.resurrectTrigger) isDead = false
-        if (isDead) return null
-        currentHealthPoints -= effectBundle.damageDone
-        currentHealthPoints += effectBundle.healingDone
-        caster.currentHealthPoints += effectBundle.lifestealDone
-        shieldPoints += effectBundle.shieldingDone
-        effectBundle.crippleApplied?.let { isCrippled = it }
-        effectBundle.rageApplied?.let { isRaged = it }
-        return if (currentHealthPoints == 0) {
-            isDead = true
-            true }
-        else null
-    }
-
 }

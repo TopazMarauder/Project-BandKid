@@ -1,7 +1,5 @@
-package com.bandkid.game
+package com.bandkid.game.ui.screens
 
-import com.badlogic.ashley.core.PooledEngine
-import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.assets.AssetManager
@@ -14,10 +12,8 @@ import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.TimeUtils
+import com.bandkid.game.BandKidGame
 import ktx.app.KtxScreen
-import ktx.ashley.entity
-import ktx.ashley.get
-import ktx.ashley.with
 import ktx.assets.invoke
 import ktx.assets.pool
 import ktx.collections.iterate

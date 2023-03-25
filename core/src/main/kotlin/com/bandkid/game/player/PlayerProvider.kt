@@ -1,8 +1,8 @@
 package com.bandkid.game.player
 
 import com.bandkid.game.creatures.models.symphonists.Symphonist
-import com.bandkid.game.models.Coordinates
-import com.bandkid.game.models.Party
+import com.bandkid.game.player.models.Coordinates
+import com.bandkid.game.player.models.Party
 import javax.inject.Inject
 import javax.inject.Singleton
 

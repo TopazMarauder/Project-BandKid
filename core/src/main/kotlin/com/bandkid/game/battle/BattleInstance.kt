@@ -16,13 +16,13 @@ import javax.inject.Inject
 
 class BattleInstance: BattleLifecycle {
 
-    @Inject
+
     lateinit var playerProvider: PlayerProvider
 
-    @Inject
+
     lateinit var enemyProvider: EnemyProvider
 
-    @Inject
+
     lateinit var actionManager: ActionManager
 
     private val orchestra: MutableList<Symphonist> by lazy { playerProvider.getOrchestra()}

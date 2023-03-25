@@ -1,7 +1,7 @@
 package com.bandkid.game.player
 
-import com.bandkid.game.models.Coordinates
-import com.bandkid.game.models.Party
+import com.bandkid.game.player.models.Coordinates
+import com.bandkid.game.player.models.Party
 
 data class PlayerData(
     val party: Party,

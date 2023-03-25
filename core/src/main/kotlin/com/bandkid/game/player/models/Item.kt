@@ -1,4 +1,4 @@
-package com.bandkid.game.models
+package com.bandkid.game.player.models
 
 interface Item {
 //TODO basic item properties?

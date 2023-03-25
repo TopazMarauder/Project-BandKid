@@ -11,7 +11,4 @@ class BrassLegionnaire : Enemy(
     45,
     45,
     moveSet = mutableListOf(AbilityName.BASIC_PHYSICAL_ATTACK)
-) {
-
-
-}
+) {}

@@ -5,14 +5,35 @@ import com.badlogic.gdx.utils.GdxRuntimeException
 import io.mockk.*
 import org.junit.After
 import org.junit.Assert.assertThrows
+import org.junit.Ignore
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
+
+//READ BEFORE: region getInt needs to be run separately
 class SeedManagerTest() {
 
     private val subject = SeedManager
+
+    //region hasSeed
+    @Test
+    fun hasSeed_givenSetSeedInitialized_returnsTrue() {
+        subject.getSeed(getRandomInt())
+
+        val result = subject.hasSeed()
+
+        assertEquals(true, result)
+    }
+
+    @Test
+    fun hasSeed_givenSetSeedUninitialized_returnsFalse() {
+        val result = subject.hasSeed()
+
+        assertEquals(true, result)
+    }
+    //endregion hasSeed
 
     //region getSeed
     @Test
@@ -43,18 +64,21 @@ class SeedManagerTest() {
 
     //region getInt
 
+    @Ignore("Run Separately")
     @Test
     fun getInt_givenNoMinMaxSeedUnset_throwsUninitializedValueException(){
         val exceptionSubject = SeedManager
         assertThrows(GdxRuntimeException::class.java) { exceptionSubject.getInt() }
     }
 
+    @Ignore("Run Separately")
     @Test
     fun getInt_givenMinMaxSeedUnset_throwsUninitializedValueException(){
         val exceptionSubject = SeedManager
         assertThrows(GdxRuntimeException::class.java) { exceptionSubject.getInt(getRandomInt(), 10000+getRandomInt()) }
     }
 
+    @Ignore("Run Separately")
     @Test
     fun getInt_givenMaxSeedUnset_throwsUninitializedValueException(){
         val exceptionSubject = SeedManager

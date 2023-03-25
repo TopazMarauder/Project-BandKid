@@ -1,9 +1,10 @@
 package com.bandkid.game.creatures.models.symphonists
 
+import com.bandkid.game.battle.abilities.AbilityEffectBundle
 import com.bandkid.game.battle.abilities.AbilityName
 import com.bandkid.game.creatures.models.Creature
 import com.bandkid.game.creatures.models.enemies.Enemy
-import com.bandkid.game.models.Item
+import com.bandkid.game.player.models.Item
 import com.bandkid.game.utils.SeedManager
 
 abstract class Symphonist(
@@ -48,5 +49,19 @@ abstract class Symphonist(
     //Assumes most enemies will usually target symphonists, randomly
     private fun selectTarget(symphonists: MutableList<Enemy>): Array<Creature> = arrayOf(SeedManager.getInt(0, symphonists.size).let { symphonists[it] })
 
+    override fun applyEffectBundle(effectBundle: AbilityEffectBundle, caster: Creature): Boolean? {
+        if (effectBundle.resurrectTrigger) isDead = false
+        if (isDead) return null
+        currentHealthPoints -= effectBundle.damageDone
+        currentHealthPoints += effectBundle.healingDone
+        caster.currentHealthPoints += effectBundle.lifestealDone
+        shieldPoints += effectBundle.shieldingDone
+        effectBundle.crippleApplied?.let { isCrippled = it }
+        effectBundle.rageApplied?.let { isRaged = it }
+        return if (currentHealthPoints == 0) {
+            isDead = true
+            true }
+        else null
+    }
 
 }
