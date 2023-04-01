@@ -25,6 +25,8 @@ dependencies {
 
 	api "io.github.libktx:ktx-freetype:$ktxVersion"
 	api "io.github.libktx:ktx-assets:$ktxVersion"
+	api "io.github.libktx:ktx-assets-async:$ktxVersion"
+
 
 	api "io.github.libktx:ktx-async:$ktxVersion"
 
@@ -32,10 +34,6 @@ dependencies {
 
 	api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 	api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
-
-	implementation "com.google.dagger:dagger:$daggerVersion"
-	api "com.google.dagger:dagger-gwt:$daggerVersion"
-	kapt "com.google.dagger:dagger-compiler:$daggerVersion" //might break?
 
 	testImplementation 'junit:junit:4.13.2'
 	testImplementation 'org.jetbrains.kotlin:kotlin-test'

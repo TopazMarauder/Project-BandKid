@@ -4,7 +4,6 @@ import com.bandkid.game.battle.abilities.AbilityEffectBundle
 import com.bandkid.game.battle.abilities.AbilityManager
 import com.bandkid.game.battle.abilities.AbilityName
 import com.bandkid.game.creatures.models.Creature
-import javax.inject.Inject
 
 class ActionManager {
 

@@ -12,7 +12,6 @@ import kotlinx.coroutines.withContext
 import ktx.async.KTX
 import ktx.async.KtxAsync
 import ktx.async.newSingleThreadAsyncContext
-import javax.inject.Inject
 
 class BattleInstance: BattleLifecycle {
 

@@ -26,7 +26,8 @@ inline operator fun AssetManager.get(asset: MusicAssets) = getAsset<Music>(asset
 
 //region texture atlas
 enum class TextureAtlasAssets(val path: String) {
-    Game("images/game.atlas")
+    Game("images/game.atlas"),
+    UI("images/game.atlas")
 }
 
 inline fun AssetManager.load(asset: TextureAtlasAssets) = load<TextureAtlas>(asset.path)

@@ -12,7 +12,7 @@ abstract class BaseScreen(
     /**
      * Reference to the app Context object. The base screen does not use it, but the subclass objects do.
      */
-    val ctx: Context
+    //val ctx: Context
 ) : KtxScreen {
 
     /**
