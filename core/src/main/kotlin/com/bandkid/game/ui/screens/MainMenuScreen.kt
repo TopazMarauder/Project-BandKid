@@ -1,7 +1,6 @@
-package com.bandkid.game.ui.screens.menus
+package com.bandkid.game.ui.screens
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input.TextInputListener
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
@@ -11,7 +10,6 @@ import com.bandkid.game.BandKidGame
 import com.bandkid.game.battle.BattleScreen
 import com.bandkid.game.utils.SeedManager
 import ktx.app.KtxScreen
-import ktx.async.skipFrame
 import ktx.graphics.use
 
 class MainMenuScreen  (private val game: BandKidGame,

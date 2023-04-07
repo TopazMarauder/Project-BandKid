@@ -46,8 +46,8 @@ class SeedManagerTest() {
     @Test
     fun getSeed_givenSetSeedInitialized_returnsSetSeed() {
         val setSeed = getRandomInt()
-        subject.getSeed()
-        assertEquals(setSeed, subject.getSeed(setSeed))
+        subject.getSeed(setSeed)
+        assertEquals(setSeed, subject.getSeed(getRandomInt()))
     }
 
     @Test

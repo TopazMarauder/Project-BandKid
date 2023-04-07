@@ -10,7 +10,7 @@ object SeedManager  {
     fun hasSeed(): Boolean = gameSeed?.let { true } ?: false
 
     fun getSeed(setSeed: Int? = null): Int =
-        (setSeed?.absoluteValue ?: gameSeed ?: Random.nextInt().absoluteValue).also {gameSeed = it}
+        ( gameSeed ?: setSeed?.absoluteValue ?: Random.nextInt().absoluteValue).also {gameSeed = it}
 
     //region getInt
     fun getInt(min: Int, max: Int): Int =
