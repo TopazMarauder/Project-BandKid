@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter.DigitsOnlyFilter
 import com.bandkid.game.BandKidGame
+import com.bandkid.game.ui.widgets.SeedWidget
 import com.bandkid.game.utils.*
 import ktx.actors.onClick
 import ktx.graphics.use
@@ -19,53 +20,24 @@ class LoadingScreen (private val game: BandKidGame,
                      private val camera: OrthographicCamera,
                      private val stage: Stage
 ) : BaseScreen() {
-    private val seedField = scene2d.textField(text = "_______________").apply {
-        x = 250f
-        y = 250f
-        sizeBy(40f, 0f)
-        textFieldFilter = DigitsOnlyFilter()
-        onClick { text = "" }
-        debug()
+    val seedWidget = SeedWidget()
+
+    override fun show() {
+        MusicAssets.values().forEach { assets.load(it) }
+        SoundAssets.values().forEach { assets.load(it) }
+        TextureAtlasAssets.values().forEach { assets.load(it) }
     }
 
-    private val seedEnterButton = scene2d.textButton("ENTER"){
-        x = 450f
-        y = 250f
-        debug()
-        onClick {
-            applySeedFromField()
-        }
-    }
 
     private val startButton = scene2d.textButton("ENTER"){
         x = 250f
         y = 100f
         debug()
         onClick {
-            applySeedFromField()
-        }
-    }
 
-    override fun show() {
-        MusicAssets.values().forEach { assets.load(it) }
-        SoundAssets.values().forEach { assets.load(it) }
-        TextureAtlasAssets.values().forEach { assets.load(it) }
-        stage.actors {
-            label("Enter Seed"){
-                x = 40f
-                y = 250f
-                sizeBy(120f, 0f)
             }
         }
-    }
 
-    private fun applySeedFromField() {
-        if (seedField.text == "_______________" || seedField.text == "") {
-            seedField.text = SeedManager.getSeed().toString()
-        } else {
-            seedField.text = SeedManager.getSeed(seedField.text.toInt()).toString()
-        }
-    }
 
     override fun render(delta: Float) {
         //continue loading assets
@@ -73,24 +45,28 @@ class LoadingScreen (private val game: BandKidGame,
         camera.update()
 
 
-            batch.projectionMatrix = camera.combined
-            batch.use {
-                stage.addActor(seedField)
-                stage.addActor(seedEnterButton)
-                stage.addActor(startButton)
-                font.draw(it, "Brass and Blood", 100f, 150f)
-                if (assets.isFinished) {
-                    font.draw(it, "Finished Loading", 100f, 100f)
-                    //font.draw(it, "Enter Seed:_______________", 50f, 250f)
-                    //font.draw(it, "", 275f, 250f)
+        batch.projectionMatrix = camera.combined
+        batch.use {
+            stage.addActor(seedWidget)
+            seedWidget.apply {
+                seedEnterButton.onClick { applySeedFromField() }
+                x = 20f
+                y = 400f
 
-                } else {
-                    font.draw(it, "Loading Assets. . . ", 100f, 100f)
-                }
             }
+            stage.addActor(startButton)
+            font.draw(it, "Brass and Blood", 100f, 150f)
+            if (assets.isFinished) {
+                font.draw(it, "Finished Loading", 100f, 100f)
+                //font.draw(it, "Enter Seed:_______________", 50f, 250f)
+                //font.draw(it, "", 275f, 250f)
+
+            } else {
+                font.draw(it, "Loading Assets. . . ", 100f, 100f)
+            }
+        }
         stage.act()
         stage.draw()
-
 
 
 //            if (Gdx.input.justTouched() && assets.isFinished){
@@ -99,7 +75,18 @@ class LoadingScreen (private val game: BandKidGame,
 //                game.removeScreen<LoadingScreen>()
 //                dispose()
 //            }
+    }
+
+
+    private fun applySeedFromField() {
+        with(seedWidget){
+        if (seedField.text == "_______________" || seedField.text == "") {
+            seedField.text = SeedManager.getSeed().toString()
+        } else {
+            seedField.text = SeedManager.getSeed(seedField.text.toInt()).toString()
         }
+    }
+    }
 
 
     override fun resize(width: Int, height: Int) {}
