@@ -1,58 +1,83 @@
 package com.bandkid.game
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.Texture.TextureFilter.Linear
+import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
-import com.bandkid.game.di.CoreComponent
-import com.bandkid.game.di.CoreModule
-import com.bandkid.game.menus.MainMenuScreen
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
+import com.badlogic.gdx.utils.viewport.FitViewport
+import com.bandkid.game.ui.screens.LoadingScreen
+import ktx.actors.stage
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
-import ktx.app.clearScreen
-import ktx.assets.disposeSafely
-import ktx.assets.toInternalFile
-import ktx.graphics.use
+import ktx.inject.Context
+import ktx.inject.register
+import ktx.log.debug
+import ktx.scene2d.Scene2DSkin
+import ktx.style.label
+import ktx.style.textButton
+import ktx.style.textField
+import ktx.style.touchpad
 
 class BandKidGame : KtxGame<KtxScreen>() {
 
-    lateinit var batch: SpriteBatch
-    lateinit var font: BitmapFont
+    private lateinit var batch: SpriteBatch
+    private lateinit var stage: Stage
+    private lateinit var camera: OrthographicCamera
 
-    lateinit var coreComponent: CoreComponent
+    private val countdownFont: BitmapFont by lazy { FreeTypeFontGenerator(Gdx.files.internal(COUNTDOWN_FONT)).let {
+        it.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply { size = 20 })
+            .apply { it.dispose() }
+    } }
+    private val context = Context()
+
 
     override fun create() {
+        setupBatchAndStage()
+        Scene2DSkin.defaultSkin = makeSkin()//TODO MAKE CUSTOM SKIN
+        Gdx.input.inputProcessor = stage
+        context.register {
+            bindSingleton<Batch>(batch)
+            bindSingleton(countdownFont)
+            bindSingleton(AssetManager())
+            bindSingleton(stage)
+            bindSingleton(camera)
 
+            addScreen(LoadingScreen(this@BandKidGame, inject(), inject(), inject(), inject(), inject()))
+        }
+        setScreen<LoadingScreen>()
+        super.create()
+    }
+
+    private fun setupBatchAndStage() {
+        camera = OrthographicCamera().apply { setToOrtho(false, 640F, 480f) }
         batch = SpriteBatch()
-        font = FreeTypeFontGenerator(Gdx.files.internal(COUNTDOWN_FONT)).let {
-            it.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply { size = 20 })
-                .apply { it.dispose() }
-        }
-        addScreen(MainMenuScreen(this))
-        addScreen(FirstScreen())
-        setScreen<MainMenuScreen>()
-    }
-
-    companion object {
-        const val COUNTDOWN_FONT = "countdown.ttf"
-    }
-}
-
-class FirstScreen : KtxScreen {
-    private val image = Texture("logo.png".toInternalFile(), true).apply { setFilter(Linear, Linear) }
-    private val batch = SpriteBatch()
-
-    override fun render(delta: Float) {
-        clearScreen(red = 0.7f, green = 0.7f, blue = 0.7f)
-        batch.use {
-            it.draw(image, 100f, 160f)
-        }
+        stage = Stage(FitViewport(camera.viewportWidth, camera.viewportHeight, camera), batch)
     }
 
     override fun dispose() {
-        image.disposeSafely()
-        batch.disposeSafely()
+        countdownFont.dispose()
+        context.dispose()
+        super.dispose()
+    }
+
+    private fun makeSkin(): Skin {
+        return Skin().apply {
+            label { this.font = countdownFont }
+            textField { this.font = countdownFont
+            fontColor = Color.CYAN}
+            touchpad { }
+            textButton { this.font = countdownFont }
+                   }
+    }
+
+
+    companion object {
+        const val COUNTDOWN_FONT = "countdown.ttf"
     }
 }

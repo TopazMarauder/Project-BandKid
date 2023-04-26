@@ -1,9 +1,8 @@
 package com.bandkid.game.battle.abilities
 
 import com.bandkid.game.creatures.models.Creature
-import javax.inject.Inject
 
-class ActiveAbilityEffects @Inject constructor() {
+class ActiveAbilityEffects {
 
     fun applyBasicPhysicalAttack(caster: Creature, target: Creature) =
         AbilityEffectBundle(damageDone = calculateDamage(BD_BASIC_PHYSICAL, caster.strength, target.durability))

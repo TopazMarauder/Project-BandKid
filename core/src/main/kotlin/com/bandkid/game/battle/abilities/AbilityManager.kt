@@ -2,9 +2,8 @@ package com.bandkid.game.battle.abilities
 
 import com.bandkid.game.battle.abilities.AbilityName.*
 import com.bandkid.game.creatures.models.Creature
-import javax.inject.Inject
 
-class AbilityManager @Inject constructor(
+class AbilityManager(
     private val activeAbilityEffects: ActiveAbilityEffects
 ) {
 

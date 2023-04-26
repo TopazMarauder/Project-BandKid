@@ -1,13 +1,16 @@
 package com.bandkid.game.utils
 
 import ktx.app.gdxError
+import kotlin.math.absoluteValue
 import kotlin.random.Random
 
 object SeedManager  {
     private var gameSeed: Int? = null
 
+    fun hasSeed(): Boolean = gameSeed?.let { true } ?: false
+
     fun getSeed(setSeed: Int? = null): Int =
-        (setSeed ?: gameSeed ?: Random.nextInt()).also {gameSeed = it}
+        ( gameSeed ?: setSeed?.absoluteValue ?: Random.nextInt().absoluteValue).also {gameSeed = it}
 
     //region getInt
     fun getInt(min: Int, max: Int): Int =

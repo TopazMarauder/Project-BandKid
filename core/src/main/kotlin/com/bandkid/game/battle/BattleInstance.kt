@@ -12,21 +12,20 @@ import kotlinx.coroutines.withContext
 import ktx.async.KTX
 import ktx.async.KtxAsync
 import ktx.async.newSingleThreadAsyncContext
-import javax.inject.Inject
 
 class BattleInstance: BattleLifecycle {
 
-    @Inject
+
     lateinit var playerProvider: PlayerProvider
 
-    @Inject
+
     lateinit var enemyProvider: EnemyProvider
 
-    @Inject
+
     lateinit var actionManager: ActionManager
 
     private val orchestra: MutableList<Symphonist> by lazy { playerProvider.getOrchestra()}
-    private val enemies: MutableList<Enemy> by lazy {enemyProvider.getEnemies() }
+    private val enemies: MutableList<Enemy> by lazy {enemyProvider.getCacophony() }
     private val scope = KtxAsync
     private val playerExecutor : CoroutineDispatcher = newSingleThreadAsyncContext()
     private val defaultExecutor : CoroutineDispatcher = Dispatchers.KTX
@@ -46,7 +45,6 @@ class BattleInstance: BattleLifecycle {
         scope.launch {
             getEnemyActions()
             withContext(playerExecutor) {
-
             }
         }
         super.onChoicePhase()

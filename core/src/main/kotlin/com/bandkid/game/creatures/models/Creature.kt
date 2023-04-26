@@ -1,5 +1,6 @@
 package com.bandkid.game.creatures.models
 
+import com.bandkid.game.battle.abilities.AbilityEffectBundle
 import com.bandkid.game.battle.abilities.AbilityName
 import com.bandkid.game.creatures.models.enemies.Enemy
 import com.bandkid.game.creatures.models.symphonists.Symphonist
@@ -29,4 +30,5 @@ interface Creature {
     fun getPassiveTargets(): Array<Creature>
     fun getDeathMove(): AbilityName
     fun getDeathTargets(): Array<Creature>
+    fun applyEffectBundle(effectBundle: AbilityEffectBundle, caster: Creature): Boolean?
 }
