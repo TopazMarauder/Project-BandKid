@@ -1,54 +1,58 @@
 package com.bandkid.game.ui.screens
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.utils.ScreenUtils
+import com.badlogic.gdx.scenes.scene2d.Stage
 import com.bandkid.game.BandKidGame
-import com.bandkid.game.battle.BattleScreen
-import com.bandkid.game.utils.SeedManager
-import ktx.app.KtxScreen
+import com.bandkid.game.ui.screens.huds.MainMenuHUD
+import ktx.actors.centerPosition
+import ktx.actors.onClick
 import ktx.graphics.use
 
-class MainMenuScreen  (private val game: BandKidGame,
-                       private val batch: Batch,
-                       private val font: BitmapFont,
-                       private val assets: AssetManager,
-                       private val camera: OrthographicCamera) : KtxScreen {
+class MainMenuScreen(
+    private val game: BandKidGame,
+    private val batch: Batch,
+    private val font: BitmapFont,
+    private val assets: AssetManager,
+    private val camera: OrthographicCamera,
+    private val baseStage: Stage
+) : BaseScreen() {
 
-    override fun show() {}
+    private val mainMenuHUD = MainMenuHUD()
+
+    override fun show() {
+        super.show()
+        baseStage.clear()
+    }
 
     override fun render(delta: Float) {
+        super.render(delta)
 
-        ScreenUtils.clear(0f,0f,0.2f,1f)
+        baseStage.addActor(mainMenuHUD)
 
-        camera.update()
-
-            batch.projectionMatrix = camera.combined
-            batch.use {
-                font.draw(batch, "Brass and Blood", 100f, 150f)
-                font.draw(batch, SeedManager.getSeed().toString(), 50f, 250f)
-                //font.draw()
-            }
-
-
-
-            if (Gdx.input.justTouched()){
-                game.addScreen(BattleScreen(game, batch, font, assets, camera))
+        mainMenuHUD.apply {
+            setSize(stage.width-100f, stage.height-100f)
+            centerPosition(width+100f, height+100f)
+            //if (assets.isFinished) loadStatusText.setText()
+            startButton.onClick {
+                game.addScreen(BattleScreen(game, batch, font, assets, camera, baseStage))
                 game.setScreen<BattleScreen>()
                 game.removeScreen<MainMenuScreen>()
                 dispose()
             }
+        }
 
-
+        baseStage.viewport.apply()
+        baseStage.act()
+        baseStage.draw()
     }
 
-    override fun resize(width: Int, height: Int) {}
-    override fun pause() {}
-    override fun resume() {}
-    override fun hide() {}
-    override fun dispose() {}
+
+    override fun hide() {
+        baseStage.clear()
+    }
+
 
 }

@@ -12,7 +12,7 @@ object PlayerProvider {
 
     fun getOrchestra() = playerData.party.orchestra
 
-    fun setOrchestra(orchestra: MutableList<Symphonist>) { playerData.party.orchestra = orchestra}
+    fun setOrchestra(orchestra: MutableList<Symphonist>) =  orchestra.also{playerData.party.orchestra = it}
 
     fun getFloor() = 1 //TODO add floor to player data, var, setter?
 }

@@ -28,6 +28,7 @@ class BandKidGame : KtxGame<KtxScreen>() {
 
     private lateinit var batch: SpriteBatch
     private lateinit var stage: Stage
+    private lateinit var camera: OrthographicCamera
 
     private val countdownFont: BitmapFont by lazy { FreeTypeFontGenerator(Gdx.files.internal(COUNTDOWN_FONT)).let {
         it.generateFont(FreeTypeFontGenerator.FreeTypeFontParameter().apply { size = 20 })
@@ -45,7 +46,7 @@ class BandKidGame : KtxGame<KtxScreen>() {
             bindSingleton(countdownFont)
             bindSingleton(AssetManager())
             bindSingleton(stage)
-            bindSingleton(OrthographicCamera().apply { setToOrtho(false, 800f, 480f) })
+            bindSingleton(camera)
 
             addScreen(LoadingScreen(this@BandKidGame, inject(), inject(), inject(), inject(), inject()))
         }
@@ -54,8 +55,9 @@ class BandKidGame : KtxGame<KtxScreen>() {
     }
 
     private fun setupBatchAndStage() {
+        camera = OrthographicCamera().apply { setToOrtho(false, 640F, 480f) }
         batch = SpriteBatch()
-        stage = stage(batch = batch, FitViewport(800f, 480f))
+        stage = Stage(FitViewport(camera.viewportWidth, camera.viewportHeight, camera), batch)
     }
 
     override fun dispose() {

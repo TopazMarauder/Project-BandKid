@@ -34,13 +34,25 @@ class PlayerProviderTest {
     @Test
     fun setOrchestra_returnsCorrectOrchestraWhenGetOrchestra() {
         val subject1 = PlayerProvider
-        val symphonist1 =  object: Symphonist(1, 1,1,1,1,1,1) {}
-        val symphonist2 =  object: Symphonist(2, 1,1,1,1,1,1) {}
-        val symphonist3 =  object: Symphonist(3, 1,1,1,1,1,1) {}
+        val symphonist1 =  object: Symphonist(4, 1,1,1,1,1,1) {}
+        val symphonist2 =  object: Symphonist(5, 1,1,1,1,1,1) {}
+        val symphonist3 =  object: Symphonist(6, 1,1,1,1,1,1) {}
         val orchestra1 = mutableListOf(symphonist1, symphonist2, symphonist3)
 
         subject1.setOrchestra(orchestra1)
 
         assertEquals(orchestra1, subject1.getOrchestra())
+    }
+
+
+    @Test
+    fun setOrchestra_returnsCorrectOrchestra() {
+        val subject1 = PlayerProvider
+        val symphonist1 =  object: Symphonist(7, 1,1,1,1,1,1) {}
+        val symphonist2 =  object: Symphonist(8, 1,1,1,1,1,1) {}
+        val symphonist3 =  object: Symphonist(9, 1,1,1,1,1,1) {}
+        val orchestra1 = mutableListOf(symphonist1, symphonist2, symphonist3)
+
+        assertEquals(orchestra1, subject1.setOrchestra(orchestra1))
     }
 }

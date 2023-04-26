@@ -45,7 +45,7 @@ class BattleInstanceTest : AsyncTest() {
         val enemy2 = mockk<Enemy>(relaxed = true)  { every { isDead } returns false andThen true}
         val enemies = mutableListOf(enemy1, enemy2)
         every { playerProvider.getOrchestra() } returns orchestra
-        every { enemyProvider.getEnemies() } returns enemies
+        every { enemyProvider.getCacophony() } returns enemies
 
         runTest { onRenderingThread { subject.onChoicePhase() } }
 
@@ -64,7 +64,7 @@ class BattleInstanceTest : AsyncTest() {
         val orchestra = mutableListOf(symphonist1, symphonist2)
         val enemies = mutableListOf(enemy1)
         every { playerProvider.getOrchestra() } returns orchestra
-        every { enemyProvider.getEnemies() } returns enemies
+        every { enemyProvider.getCacophony() } returns enemies
         symphonist2.apply {
             every { isDead } returns false andThen true
             every { agility } returns 3
@@ -102,7 +102,7 @@ class BattleInstanceTest : AsyncTest() {
         val orchestra = mutableListOf(symphonist1, symphonist2)
         val enemies = mutableListOf(enemy1, enemy2)
         every { playerProvider.getOrchestra() } returns orchestra
-        every { enemyProvider.getEnemies() } returns enemies
+        every { enemyProvider.getCacophony() } returns enemies
         symphonist1.apply {
             every { isDead } returns false andThen true
             every { agility } returns 3
@@ -157,7 +157,7 @@ class BattleInstanceTest : AsyncTest() {
         val orchestra = mutableListOf(symphonist1)
         val enemies = mutableListOf(enemy1)
         every { playerProvider.getOrchestra() } returns orchestra
-        every { enemyProvider.getEnemies() } returns enemies
+        every { enemyProvider.getCacophony() } returns enemies
         mockkObject(SeedManager)
         every { SeedManager.getDouble(0.0, 0.9) } returns .1
 
@@ -179,7 +179,7 @@ class BattleInstanceTest : AsyncTest() {
         val orchestra = mutableListOf(symphonist1, symphonist2)
         val enemies = mutableListOf(enemy1, enemy2)
         every { playerProvider.getOrchestra() } returns orchestra
-        every { enemyProvider.getEnemies() } returns enemies
+        every { enemyProvider.getCacophony() } returns enemies
         enemy2.apply {
             every { isDead } returns false andThen true
             every { agility } returns 4
@@ -226,7 +226,7 @@ class BattleInstanceTest : AsyncTest() {
         val orchestra = mutableListOf(symphonist1, symphonist2)
         val enemies = mutableListOf(enemy1, enemy2)
         every { playerProvider.getOrchestra() } returns orchestra
-        every { enemyProvider.getEnemies() } returns enemies
+        every { enemyProvider.getCacophony() } returns enemies
         symphonist1.apply {
             every { isDead } returns false andThen true
             every { agility } returns 3
@@ -281,7 +281,7 @@ class BattleInstanceTest : AsyncTest() {
         val orchestra = mutableListOf(symphonist1)
         val enemies = mutableListOf(enemy1)
         every { playerProvider.getOrchestra() } returns orchestra
-        every { enemyProvider.getEnemies() } returns enemies
+        every { enemyProvider.getCacophony() } returns enemies
         mockkObject(SeedManager)
         every { SeedManager.getDouble(0.0, 0.9) } returns .1
 
@@ -314,7 +314,7 @@ class BattleInstanceTest : AsyncTest() {
         val orchestra = mutableListOf(symphonist1)
         val enemies = mutableListOf(enemy1)
         every { playerProvider.getOrchestra() } returns orchestra
-        every { enemyProvider.getEnemies() } returns enemies
+        every { enemyProvider.getCacophony() } returns enemies
         every { actionManager.initiateActiveAbility(any()) } returns true
         every { symphonist1.getDeathTargets() } returns arrayOf(enemy1)
         mockkObject(SeedManager)
@@ -347,7 +347,7 @@ class BattleInstanceTest : AsyncTest() {
         val orchestra = mutableListOf(symphonist1)
         val enemies = mutableListOf(enemy1)
         every { playerProvider.getOrchestra() } returns orchestra
-        every { enemyProvider.getEnemies() } returns enemies
+        every { enemyProvider.getCacophony() } returns enemies
         every { actionManager.initiateActiveAbility(any()) } returns true
         every { symphonist1.getDeathTargets() } returns arrayOf(enemy1)
         mockkObject(SeedManager)
@@ -392,7 +392,7 @@ class BattleInstanceTest : AsyncTest() {
 //        val orchestra = mutableListOf(symphonist1)
 //        val enemies = mutableListOf(enemy1, enemy2)
 //        every { playerProvider.getOrchestra() } returns orchestra
-//        every { enemyProvider.getEnemies() } returns enemies
+//        every { enemyProvider.getCacophony() } returns enemies
 //        every { actionManager.initiateActiveAbility(any()) } returns true
 //        every { symphonist1.getDeathTargets() } returns arrayOf(enemy1)
 //        mockkObject(SeedManager)

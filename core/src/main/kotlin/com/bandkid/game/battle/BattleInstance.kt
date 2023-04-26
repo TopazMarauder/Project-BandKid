@@ -25,7 +25,7 @@ class BattleInstance: BattleLifecycle {
     lateinit var actionManager: ActionManager
 
     private val orchestra: MutableList<Symphonist> by lazy { playerProvider.getOrchestra()}
-    private val enemies: MutableList<Enemy> by lazy {enemyProvider.getEnemies() }
+    private val enemies: MutableList<Enemy> by lazy {enemyProvider.getCacophony() }
     private val scope = KtxAsync
     private val playerExecutor : CoroutineDispatcher = newSingleThreadAsyncContext()
     private val defaultExecutor : CoroutineDispatcher = Dispatchers.KTX
