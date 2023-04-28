@@ -1,7 +1,7 @@
 package com.bandkid.game.battle
 
 import com.bandkid.game.creatures.models.enemies.Enemy
-import com.bandkid.game.creatures.models.symphonists.Symphonist
+
 
 object EnemyProvider {
 
@@ -14,5 +14,6 @@ object EnemyProvider {
     fun getCacophony() = enemies
 
     fun setCacophony(cacophony: MutableList<Enemy>) = cacophony.also { enemies = it }
+
 
 }

@@ -3,8 +3,10 @@
 package com.bandkid.game.battle
 
 import com.bandkid.game.AsyncTest
+import com.bandkid.game.battle.abilities.AbilityName
 import com.bandkid.game.battle.abilities.AbilityName.NO_ACTION_DEATH
 import com.bandkid.game.battle.abilities.AbilityName.BASIC_PHYSICAL_ATTACK
+import com.bandkid.game.creatures.models.Creature
 import com.bandkid.game.creatures.models.enemies.Enemy
 import com.bandkid.game.creatures.models.symphonists.Symphonist
 import com.bandkid.game.player.PlayerProvider
@@ -20,8 +22,6 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class BattleInstanceTest : AsyncTest() {
 
-    private val playerProvider = mockk<PlayerProvider>()
-    private val enemyProvider = mockk<EnemyProvider>()
     private val actionManager = mockk<ActionManager>(relaxed = true)
 
     private lateinit var subject: BattleInstance
@@ -30,10 +30,10 @@ class BattleInstanceTest : AsyncTest() {
     @Before
     fun setup() {
         SeedManager.getSeed()
+        mockkObject(PlayerProvider)
+        mockkObject(EnemyProvider)
 
         subject = BattleInstance()
-        subject.playerProvider = playerProvider
-        subject.enemyProvider = enemyProvider
         subject.actionManager = actionManager
     }
 
@@ -44,13 +44,16 @@ class BattleInstanceTest : AsyncTest() {
         val enemy1 = mockk<Enemy>(relaxed = true) { every { isDead } returns false andThen true}
         val enemy2 = mockk<Enemy>(relaxed = true)  { every { isDead } returns false andThen true}
         val enemies = mutableListOf(enemy1, enemy2)
-        every { playerProvider.getOrchestra() } returns orchestra
-        every { enemyProvider.getCacophony() } returns enemies
+
+        every { PlayerProvider.getOrchestra() } returns orchestra
+        every { EnemyProvider.getCacophony() } returns enemies
 
         runTest { onRenderingThread { subject.onChoicePhase() } }
 
         verify { enemy1.queueMove(orchestra, enemies) }
         verify { enemy2.queueMove(orchestra, enemies) }
+        unmockkObject(PlayerProvider)
+        unmockkObject(EnemyProvider)
     }
     //endregion onChoicePhase
 
@@ -63,8 +66,9 @@ class BattleInstanceTest : AsyncTest() {
         val enemy1 = mockk<Enemy>(relaxed = true)
         val orchestra = mutableListOf(symphonist1, symphonist2)
         val enemies = mutableListOf(enemy1)
-        every { playerProvider.getOrchestra() } returns orchestra
-        every { enemyProvider.getCacophony() } returns enemies
+
+        every { PlayerProvider.getOrchestra() } returns orchestra
+        every { EnemyProvider.getCacophony() } returns enemies
         symphonist2.apply {
             every { isDead } returns false andThen true
             every { agility } returns 3
@@ -101,8 +105,9 @@ class BattleInstanceTest : AsyncTest() {
         val enemy2 = mockk<Enemy>(relaxed = true) { }
         val orchestra = mutableListOf(symphonist1, symphonist2)
         val enemies = mutableListOf(enemy1, enemy2)
-        every { playerProvider.getOrchestra() } returns orchestra
-        every { enemyProvider.getCacophony() } returns enemies
+
+        every { PlayerProvider.getOrchestra() } returns orchestra
+        every { EnemyProvider.getCacophony() } returns enemies
         symphonist1.apply {
             every { isDead } returns false andThen true
             every { agility } returns 3
@@ -156,8 +161,9 @@ class BattleInstanceTest : AsyncTest() {
         }
         val orchestra = mutableListOf(symphonist1)
         val enemies = mutableListOf(enemy1)
-        every { playerProvider.getOrchestra() } returns orchestra
-        every { enemyProvider.getCacophony() } returns enemies
+
+        every { PlayerProvider.getOrchestra() } returns orchestra
+        every { EnemyProvider.getCacophony() } returns enemies
         mockkObject(SeedManager)
         every { SeedManager.getDouble(0.0, 0.9) } returns .1
 
@@ -178,8 +184,9 @@ class BattleInstanceTest : AsyncTest() {
         val enemy2 = mockk<Enemy> { }
         val orchestra = mutableListOf(symphonist1, symphonist2)
         val enemies = mutableListOf(enemy1, enemy2)
-        every { playerProvider.getOrchestra() } returns orchestra
-        every { enemyProvider.getCacophony() } returns enemies
+
+        every { PlayerProvider.getOrchestra() } returns orchestra
+        every { EnemyProvider.getCacophony() } returns enemies
         enemy2.apply {
             every { isDead } returns false andThen true
             every { agility } returns 4
@@ -225,8 +232,9 @@ class BattleInstanceTest : AsyncTest() {
         val enemy2 = mockk<Enemy> { }
         val orchestra = mutableListOf(symphonist1, symphonist2)
         val enemies = mutableListOf(enemy1, enemy2)
-        every { playerProvider.getOrchestra() } returns orchestra
-        every { enemyProvider.getCacophony() } returns enemies
+
+        every { PlayerProvider.getOrchestra() } returns orchestra
+        every { EnemyProvider.getCacophony() } returns enemies
         symphonist1.apply {
             every { isDead } returns false andThen true
             every { agility } returns 3
@@ -280,8 +288,9 @@ class BattleInstanceTest : AsyncTest() {
         }
         val orchestra = mutableListOf(symphonist1)
         val enemies = mutableListOf(enemy1)
-        every { playerProvider.getOrchestra() } returns orchestra
-        every { enemyProvider.getCacophony() } returns enemies
+
+        every { PlayerProvider.getOrchestra() } returns orchestra
+        every { EnemyProvider.getCacophony() } returns enemies
         mockkObject(SeedManager)
         every { SeedManager.getDouble(0.0, 0.9) } returns .1
 
@@ -313,8 +322,9 @@ class BattleInstanceTest : AsyncTest() {
         }
         val orchestra = mutableListOf(symphonist1)
         val enemies = mutableListOf(enemy1)
-        every { playerProvider.getOrchestra() } returns orchestra
-        every { enemyProvider.getCacophony() } returns enemies
+
+        every { PlayerProvider.getOrchestra() } returns orchestra
+        every { EnemyProvider.getCacophony() } returns enemies
         every { actionManager.initiateActiveAbility(any()) } returns true
         every { symphonist1.getDeathTargets() } returns arrayOf(enemy1)
         mockkObject(SeedManager)
@@ -327,27 +337,31 @@ class BattleInstanceTest : AsyncTest() {
 
     @Test
     fun onActionPhase_givenCreatureDeathDuringDeathEffect_callsCreatureOnDeathEffects(){
-        val symphonist1 = mockk<Symphonist> {
-            every { isDead } returns true
-            every { shouldActivateDeathAbility } returns true andThen false
-            every { agility } returns 1
-            every { getDeathMove() } returns NO_ACTION_DEATH
-            every { getQueuedMove() } returns mockk()
-            every { getQueuedTargets() } returns arrayOf(mockk())
-        }
-        val enemy1 = mockk<Enemy> {
-            every { isDead } returns false andThen true
-            every { shouldActivateDeathAbility } returns true andThen false
-            every { agility } returns 3
-            every { getDeathMove() } returns NO_ACTION_DEATH
-            every { getDeathTargets() } returns arrayOf(symphonist1)
-            every { getQueuedMove() } returns mockk()
-            every { getQueuedTargets() } returns arrayOf(mockk())
-        }
+        createMockkSymphonist()
+        val symphonist1 = createMockkSymphonist(
+            isDeadStates = listOf(true),
+            shouldActivateDeathAbilityStates = listOf(true, false),
+            agilityStates = listOf(1),
+            getDeathMoveStates = listOf(NO_ACTION_DEATH),
+            getQueuedMoveStates = listOf(mockk()),
+            getQueuedTargetsStates = listOf(arrayOf(mockk()))
+        )
+
+        val enemy1 = createMockkEnemy(
+            isDeadStates= listOf(false, true),
+            shouldActivateDeathAbilityStates= listOf(true, false),
+            agilityStates= listOf(3),
+            getDeathMoveStates= listOf(NO_ACTION_DEATH),
+            getDeathTargetsStates= listOf(arrayOf(symphonist1)),
+            getQueuedMoveStates= listOf(mockk()),
+            getQueuedTargetsStates= listOf(arrayOf(mockk())),
+        )
+
         val orchestra = mutableListOf(symphonist1)
         val enemies = mutableListOf(enemy1)
-        every { playerProvider.getOrchestra() } returns orchestra
-        every { enemyProvider.getCacophony() } returns enemies
+
+        every { PlayerProvider.getOrchestra() } returns orchestra
+        every { EnemyProvider.getCacophony() } returns enemies
         every { actionManager.initiateActiveAbility(any()) } returns true
         every { symphonist1.getDeathTargets() } returns arrayOf(enemy1)
         mockkObject(SeedManager)
@@ -358,9 +372,9 @@ class BattleInstanceTest : AsyncTest() {
         verify (exactly = 1){ actionManager.initiateDeathAbility(symphonist1) }
         verify (exactly = 1){ actionManager.initiateDeathAbility(enemy1) }
     }
-
-
     //TODO FIGURE OUT HOW TO DO THIS BULL
+
+
 //    @Test
 //    fun onActionPhase_givenNewMoreAgileDeadCreature_callsCreatureOnDeathEffects(){
 //        val symphonist1 = mockk<Symphonist> {
@@ -391,8 +405,8 @@ class BattleInstanceTest : AsyncTest() {
 //        }
 //        val orchestra = mutableListOf(symphonist1)
 //        val enemies = mutableListOf(enemy1, enemy2)
-//        every { playerProvider.getOrchestra() } returns orchestra
-//        every { enemyProvider.getCacophony() } returns enemies
+// mockkObject(PlayerProvider)
+//        mockkObject(EnemyProvider)
 //        every { actionManager.initiateActiveAbility(any()) } returns true
 //        every { symphonist1.getDeathTargets() } returns arrayOf(enemy1)
 //        mockkObject(SeedManager)
@@ -407,6 +421,47 @@ class BattleInstanceTest : AsyncTest() {
 //        }
 //    }
     //endregion determineDeaths
+
+
+    private fun createMockkSymphonist(
+        isDeadStates: List<Boolean> = listOf(),
+        shouldActivateDeathAbilityStates: List<Boolean> = listOf(),
+        agilityStates: List<Int> = listOf(),
+        getDeathMoveStates: List<AbilityName> = listOf(),
+        getDeathTargetsStates: List<Array<Creature>> = listOf(),
+        getQueuedMoveStates: List<AbilityName> = listOf(),
+        getQueuedTargetsStates: List<Array<Creature>> = listOf(),
+    ): Symphonist {
+        return mockk<Symphonist>{
+            every { isDead } returnsMany isDeadStates
+            every { shouldActivateDeathAbility } returnsMany shouldActivateDeathAbilityStates
+            every { agility } returnsMany agilityStates
+            every { getDeathMove() } returnsMany getDeathMoveStates
+            every { getDeathTargets() } returnsMany getDeathTargetsStates
+            every { getQueuedMove() } returnsMany getQueuedMoveStates
+            every { getQueuedTargets() } returnsMany getQueuedTargetsStates
+        }
+    }
+
+    private fun createMockkEnemy(
+        isDeadStates: List<Boolean> = listOf(),
+        shouldActivateDeathAbilityStates: List<Boolean> = listOf(),
+        agilityStates: List<Int> = listOf(),
+        getDeathMoveStates: List<AbilityName> = listOf(),
+        getDeathTargetsStates: List<Array<Creature>> = listOf(),
+        getQueuedMoveStates: List<AbilityName> = listOf(),
+        getQueuedTargetsStates: List<Array<Creature>> = listOf(),
+    ): Enemy {
+        return mockk<Enemy>{
+            every { isDead } returnsMany isDeadStates
+            every { shouldActivateDeathAbility } returnsMany shouldActivateDeathAbilityStates
+            every { agility } returnsMany agilityStates
+            every { getDeathMove() } returnsMany getDeathMoveStates
+            every { getDeathTargets() } returnsMany getDeathTargetsStates
+            every { getQueuedMove() } returnsMany getQueuedMoveStates
+            every { getQueuedTargets() } returnsMany getQueuedTargetsStates
+        }
+    }
 
     @After
     fun cleanup() {

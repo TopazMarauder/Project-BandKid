@@ -1,10 +1,13 @@
 package com.bandkid.game.utils
 
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.utils.GdxRuntimeException
+import com.bandkid.game.AsyncTest
 import io.mockk.*
 import org.junit.After
 import org.junit.Assert.assertThrows
+import org.junit.Before
 import org.junit.Ignore
 import kotlin.random.Random
 import kotlin.test.Test
@@ -16,6 +19,11 @@ import kotlin.test.assertNotNull
 class SeedManagerTest() {
 
     private val subject = SeedManager
+
+    @Before
+    fun clearManager() {
+        subject.clearSeed()
+    }
 
     //region hasSeed
     @Test
@@ -31,9 +39,24 @@ class SeedManagerTest() {
     fun hasSeed_givenSetSeedUninitialized_returnsFalse() {
         val result = subject.hasSeed()
 
-        assertEquals(true, result)
+        assertEquals(false, result)
     }
     //endregion hasSeed
+
+    //region clearSeed
+    @Test
+    fun clearSeed_setsSeedToNull() {
+        subject.getSeed(getRandomInt())
+
+        assertEquals(true, subject.hasSeed())
+
+        subject.clearSeed()
+
+        assertEquals(false, subject.hasSeed())
+    }
+
+
+    //endregion clearSeed
 
     //region getSeed
     @Test
