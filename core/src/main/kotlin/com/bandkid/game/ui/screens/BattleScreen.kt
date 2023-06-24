@@ -50,15 +50,15 @@ class BattleScreen(private val game: BandKidGame,
     override fun show() {
         super.show()
         baseStage.clear()
-        baseStage.actors {
-            label(SeedManager.getSeed().toString()){
-                centerPosition()
-            }
-
-            label(PlayerProvider.getOrchestra()[0].agility.toString()){
-                centerPosition(height = baseStage.height-40f)
-            }
-        }
+//        baseStage.actors {
+//            label(SeedManager.getSeed().toString()){
+//                centerPosition()
+//            }
+//
+//            label(PlayerProvider.getOrchestra()[0].agility.toString()){
+//                centerPosition(height = baseStage.height-40f)
+//            }
+//        }
 
     }
 
