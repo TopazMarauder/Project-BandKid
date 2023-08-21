@@ -9,6 +9,8 @@ object SeedManager  {
 
     fun hasSeed(): Boolean = gameSeed?.let { true } ?: false
 
+    fun clearSeed() { gameSeed = null}
+
     fun getSeed(setSeed: Int? = null): Int =
         ( gameSeed ?: setSeed?.absoluteValue ?: Random.nextInt().absoluteValue).also {gameSeed = it}
 

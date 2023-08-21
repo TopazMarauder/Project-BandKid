@@ -16,16 +16,11 @@ import ktx.async.newSingleThreadAsyncContext
 class BattleInstance: BattleLifecycle {
 
 
-    lateinit var playerProvider: PlayerProvider
-
-
-    lateinit var enemyProvider: EnemyProvider
-
 
     lateinit var actionManager: ActionManager
 
-    private val orchestra: MutableList<Symphonist> by lazy { playerProvider.getOrchestra()}
-    private val enemies: MutableList<Enemy> by lazy {enemyProvider.getCacophony() }
+    private val orchestra: MutableList<Symphonist> by lazy { PlayerProvider.getOrchestra()}
+    private val enemies: MutableList<Enemy> by lazy {EnemyProvider.getCacophony() }
     private val scope = KtxAsync
     private val playerExecutor : CoroutineDispatcher = newSingleThreadAsyncContext()
     private val defaultExecutor : CoroutineDispatcher = Dispatchers.KTX
