@@ -87,21 +87,21 @@ class SeedManagerTest() {
 
     //region getInt
 
-    @Ignore("Run Separately")
+    //@Ignore("Run Separately")
     @Test
     fun getInt_givenNoMinMaxSeedUnset_throwsUninitializedValueException(){
         val exceptionSubject = SeedManager
         assertThrows(GdxRuntimeException::class.java) { exceptionSubject.getInt() }
     }
 
-    @Ignore("Run Separately")
+    //@Ignore("Run Separately")
     @Test
     fun getInt_givenMinMaxSeedUnset_throwsUninitializedValueException(){
         val exceptionSubject = SeedManager
         assertThrows(GdxRuntimeException::class.java) { exceptionSubject.getInt(getRandomInt(), 10000+getRandomInt()) }
     }
 
-    @Ignore("Run Separately")
+    //@Ignore("Run Separately")
     @Test
     fun getInt_givenMaxSeedUnset_throwsUninitializedValueException(){
         val exceptionSubject = SeedManager
